@@ -52,7 +52,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         self.content_field = content_field
         self.query_language = query_language
         self.query_speller = query_speller
-        self.chatgpt_token_limit = get_token_limit(chatgpt_model)
+        self.chatgpt_token_limit = get_token_limit(chatgpt_model, default_to_minimum=self.ALLOW_NON_GPT_MODELS)
 
     @property
     def system_message_chat_conversation(self):
@@ -137,6 +137,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             past_messages=messages[:-1],
             new_user_content=user_query_request,
             max_tokens=self.chatgpt_token_limit - query_response_token_limit,
+            fallback_to_default=self.ALLOW_NON_GPT_MODELS,
         )
 
         chat_completion: ChatCompletion = await self.openai_client.chat.completions.create(
@@ -192,6 +193,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             # Model does not handle lengthy system messages well. Moving sources to latest user conversation to solve follow up questions prompt.
             new_user_content=original_user_query + "\n\nSources:\n" + content,
             max_tokens=self.chatgpt_token_limit - response_token_limit,
+            fallback_to_default=self.ALLOW_NON_GPT_MODELS,
         )
 
         data_points = {"text": sources_content}
@@ -201,7 +203,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             "thoughts": [
                 ThoughtStep(
                     "Prompt to generate search query",
-                    [str(message) for message in query_messages],
+                    query_messages,
                     (
                         {"model": self.chatgpt_model, "deployment": self.chatgpt_deployment}
                         if self.chatgpt_deployment
@@ -226,7 +228,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                 ),
                 ThoughtStep(
                     "Prompt to generate answer",
-                    [str(message) for message in messages],
+                    messages,
                     (
                         {"model": self.chatgpt_model, "deployment": self.chatgpt_deployment}
                         if self.chatgpt_deployment

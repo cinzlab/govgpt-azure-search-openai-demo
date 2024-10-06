@@ -63,7 +63,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         self.query_speller = query_speller
         self.vision_endpoint = vision_endpoint
         self.vision_token_provider = vision_token_provider
-        self.chatgpt_token_limit = get_token_limit(gpt4v_model)
+        self.chatgpt_token_limit = get_token_limit(gpt4v_model, default_to_minimum=self.ALLOW_NON_GPT_MODELS)
 
     @property
     def system_message_chat_conversation(self):
@@ -188,6 +188,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             past_messages=messages[:-1],
             new_user_content=user_content,
             max_tokens=self.chatgpt_token_limit - response_token_limit,
+            fallback_to_default=self.ALLOW_NON_GPT_MODELS,
         )
 
         data_points = {
@@ -200,7 +201,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             "thoughts": [
                 ThoughtStep(
                     "Prompt to generate search query",
-                    [str(message) for message in query_messages],
+                    query_messages,
                     (
                         {"model": query_model, "deployment": query_deployment}
                         if query_deployment
@@ -225,7 +226,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
                 ),
                 ThoughtStep(
                     "Prompt to generate answer",
-                    [str(message) for message in messages],
+                    messages,
                     (
                         {"model": self.gpt4v_model, "deployment": self.gpt4v_deployment}
                         if self.gpt4v_deployment

@@ -116,6 +116,9 @@
     "embeddingDimensions": {
       "value": "${AZURE_OPENAI_EMB_DIMENSIONS}"
     },
+    "gpt4vDeploymentCapacity":{
+      "value": "${AZURE_OPENAI_GPT4V_DEPLOYMENT_CAPACITY=10}"
+    },
     "openAiHost": {
       "value": "${OPENAI_HOST=azure}"
     },
@@ -152,6 +155,9 @@
     "useGPT4V": {
       "value": "${USE_GPT4V=false}"
     },
+    "enableLanguagePicker": {
+      "value": "${ENABLE_LANGUAGE_PICKER=false}"
+    },
     "useSpeechInputBrowser": {
       "value": "${USE_SPEECH_INPUT_BROWSER=false}"
     },
@@ -160,6 +166,9 @@
     },
     "useSpeechOutputAzure": {
       "value": "${USE_SPEECH_OUTPUT_AZURE=false}"
+    },
+    "useChatHistoryBrowser": {
+      "value": "${USE_CHAT_HISTORY_BROWSER=false}"
     },
     "speechServiceName": {
       "value": "${AZURE_SPEECH_SERVICE}"
@@ -187,9 +196,6 @@
     },
     "enableUnauthenticatedAccess": {
       "value": "${AZURE_ENABLE_UNAUTHENTICATED_ACCESS=false}"
-    },
-    "tenantId": {
-      "value": "${AZURE_TENANT_ID}"
     },
     "authTenantId": {
       "value": "${AZURE_AUTH_TENANT_ID}"
@@ -235,6 +241,15 @@
     },
     "runningOnAdo": {
       "value": "${TF_BUILD}"
+    },
+    "deploymentTarget": {
+      "value": "${DEPLOYMENT_TARGET=appservice}"
+    },
+    "webAppExists": {
+        "value": "${SERVICE_WEB_RESOURCE_EXISTS=false}"
+    },
+    "azureContainerAppsWorkloadProfile": {
+      "value": "${AZURE_CONTAINER_APPS_WORKLOAD_PROFILE=Consumption}"
     }
   }
 }
