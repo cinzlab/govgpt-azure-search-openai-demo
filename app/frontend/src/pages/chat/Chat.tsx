@@ -1,4 +1,6 @@
 import { useRef, useState, useEffect, useContext } from "react";
+import { useTranslation } from "react-i18next";
+import { Helmet } from "react-helmet-async";
 import { Checkbox, Panel, DefaultButton, TextField, ITextFieldProps, ICheckboxProps } from "@fluentui/react";
 import { SparkleFilled } from "@fluentui/react-icons";
 import { useId } from "@fluentui/react-hooks";
@@ -24,15 +26,19 @@ import { ExampleList } from "../../components/Example";
 import { UserChatMessage } from "../../components/UserChatMessage";
 import { HelpCallout } from "../../components/HelpCallout";
 import { AnalysisPanel, AnalysisPanelTabs } from "../../components/AnalysisPanel";
+import { HistoryPanel } from "../../components/HistoryPanel";
+import { HistoryProviderOptions, useHistoryManager } from "../../components/HistoryProviders";
+import { HistoryButton } from "../../components/HistoryButton";
+import { SettingsButton } from "../../components/SettingsButton";
 import { ClearChatButton } from "../../components/ClearChatButton";
+import { UploadFile } from "../../components/UploadFile";
 import { useLogin, getToken, requireAccessControl } from "../../authConfig";
 import { VectorSettings } from "../../components/VectorSettings";
 import { useMsal } from "@azure/msal-react";
 import { TokenClaimsDisplay } from "../../components/TokenClaimsDisplay";
 import { GPT4VSettings } from "../../components/GPT4VSettings";
-import { toolTipText } from "../../i18n/tooltips.js";
 import { LoginContext } from "../../loginContext";
-import { stubbedPublicClientApplication } from "@azure/msal-browser";
+import { LanguagePicker } from "../../i18n/LanguagePicker";
 
 const Chat = () => {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
@@ -52,6 +58,7 @@ const Chat = () => {
     const [useOidSecurityFilter, setUseOidSecurityFilter] = useState<boolean>(false);
     const [useGroupsSecurityFilter, setUseGroupsSecurityFilter] = useState<boolean>(false);
     const [gpt4vInput, setGPT4VInput] = useState<GPT4VInput>(GPT4VInput.TextAndImages);
+    const [showLanguagePicker, setshowLanguagePicker] = useState<boolean>(false);
     const [useGPT4V, setUseGPT4V] = useState<boolean>(false);
 
     const lastQuestionRef = useRef<string>("");
@@ -68,7 +75,7 @@ const Chat = () => {
     const [answers, setAnswers] = useState<[user: string, response: ChatAppResponse][]>([]);
     const [streamedAnswers, setStreamedAnswers] = useState<[user: string, response: ChatAppResponse][]>([]);
     const [speechUrls, setSpeechUrls] = useState<(string | null)[]>([]);
-
+    const [showLanguagePicker, setshowLanguagePicker] = useState<boolean>(false);
     const [showGPT4VOptions, setShowGPT4VOptions] = useState<boolean>(false);
     const [showSemanticRankerOption, setShowSemanticRankerOption] = useState<boolean>(false);
     const [showVectorOption, setShowVectorOption] = useState<boolean>(true);
@@ -76,6 +83,7 @@ const Chat = () => {
     const [showSpeechInput, setShowSpeechInput] = useState<boolean>(true);
     const [showSpeechOutputBrowser, setShowSpeechOutputBrowser] = useState<boolean>(false);
     const [showSpeechOutputAzure, setShowSpeechOutputAzure] = useState<boolean>(false);
+    const [showChatHistoryBrowser, setShowChatHistoryBrowser] = useState<boolean>(false);
     const audio = useRef(new Audio()).current;
     const [isPlaying, setIsPlaying] = useState(false);
 
@@ -97,9 +105,11 @@ const Chat = () => {
                 setRetrievalMode(RetrievalMode.Text);
             }
             setShowUserUpload(config.showUserUpload);
+            setshowLanguagePicker(config.showLanguagePicker);
             setShowSpeechInput(config.showSpeechInput);
             setShowSpeechOutputBrowser(config.showSpeechOutputBrowser);
             setShowSpeechOutputAzure(config.showSpeechOutputAzure);
+            setShowChatHistoryBrowser(config.showChatHistoryBrowser);
         });
     };
 
@@ -149,6 +159,9 @@ const Chat = () => {
     const client = useLogin ? useMsal().instance : undefined;
     const { loggedIn } = useContext(LoginContext);
 
+    const historyProvider: HistoryProviderOptions = showChatHistoryBrowser ? HistoryProviderOptions.IndexedDB : HistoryProviderOptions.None;
+    const historyManager = useHistoryManager(historyProvider);
+
     const makeApiRequest = async (question: string) => {
         lastQuestionRef.current = question;
 
@@ -184,6 +197,7 @@ const Chat = () => {
                         vector_fields: vectorFieldList,
                         use_gpt4v: useGPT4V,
                         gpt4v_input: gpt4vInput,
+                        language: i18n.language,
                         ...(seed !== null ? { seed: seed } : {})
                     }
                 },
@@ -201,12 +215,18 @@ const Chat = () => {
             if (shouldStream) {
                 const parsedResponse: ChatAppResponse = await handleAsyncRequest(question, answers, response.body);
                 setAnswers([...answers, [question, parsedResponse]]);
+                if (typeof parsedResponse.session_state === "string" && parsedResponse.session_state !== "") {
+                    historyManager.addItem(parsedResponse.session_state, [...answers, [question, parsedResponse]]);
+                }
             } else {
                 const parsedResponse: ChatAppResponseOrError = await response.json();
                 if (parsedResponse.error) {
                     throw Error(parsedResponse.error);
                 }
                 setAnswers([...answers, [question, parsedResponse as ChatAppResponse]]);
+                if (typeof parsedResponse.session_state === "string" && parsedResponse.session_state !== "") {
+                    historyManager.addItem(parsedResponse.session_state, [...answers, [question, parsedResponse as ChatAppResponse]]);
+                }
             }
             setSpeechUrls([...speechUrls, null]);
         } catch (e) {
@@ -255,7 +275,7 @@ const Chat = () => {
     };
 
     const onRetrieveCountChange = (_ev?: React.SyntheticEvent<HTMLElement, Event>, newValue?: string) => {
-        setRetrieveCount(parseInt(newValue || "15"));
+        setRetrieveCount(parseInt(newValue || "3"));
     };
 
     const onUseSemanticRankerChange = (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean) => {
@@ -338,13 +358,25 @@ const Chat = () => {
     const useGroupsSecurityFilterFieldId = useId("useGroupsSecurityFilterField");
     const shouldStreamId = useId("shouldStream");
     const shouldStreamFieldId = useId("shouldStreamField");
+    const { t, i18n } = useTranslation();
 
     return (
         <div className={styles.container}>
-            <div className={styles.commandsContainer}>
-                <ClearChatButton className={styles.commandButton} onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} />
+            {/* Setting the page title using react-helmet-async */}
+            <Helmet>
+                <title>{t("pageTitle")}</title>
+            </Helmet>
+            <div className={styles.commandsSplitContainer}>
+                <div className={styles.commandsContainer}>
+                    {showChatHistoryBrowser && <HistoryButton className={styles.commandButton} onClick={() => setIsHistoryPanelOpen(!isHistoryPanelOpen)} />}
+                </div>
+                <div className={styles.commandsContainer}>
+                    <ClearChatButton className={styles.commandButton} onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} />
+                    {showUserUpload && <UploadFile className={styles.commandButton} disabled={!loggedIn} />}
+                    <SettingsButton className={styles.commandButton} onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />
+                </div>
             </div>
-            <div className={styles.chatRoot}>
+            <div className={styles.chatRoot} style={{ marginLeft: isHistoryPanelOpen ? "300px" : "0" }}>
                 <div className={styles.chatContainer}>
                     {!lastQuestionRef.current ? (
                         <div className={styles.chatEmptyState}>
@@ -443,6 +475,282 @@ const Chat = () => {
                         activeTab={activeAnalysisPanelTab}
                     />
                 )}
+
+                {showChatHistoryBrowser && (
+                    <HistoryPanel
+                        provider={historyProvider}
+                        isOpen={isHistoryPanelOpen}
+                        notify={!isStreaming && !isLoading}
+                        onClose={() => setIsHistoryPanelOpen(false)}
+                        onChatSelected={answers => {
+                            if (answers.length === 0) return;
+                            setAnswers(answers);
+                            lastQuestionRef.current = answers[answers.length - 1][0];
+                        }}
+                    />
+                )}
+
+                <Panel
+                    headerText={t("labels.headerText")}
+                    isOpen={isConfigPanelOpen}
+                    isBlocking={false}
+                    onDismiss={() => setIsConfigPanelOpen(false)}
+                    closeButtonAriaLabel={t("labels.closeButton")}
+                    onRenderFooterContent={() => <DefaultButton onClick={() => setIsConfigPanelOpen(false)}>{t("labels.closeButton")}</DefaultButton>}
+                    isFooterAtBottom={true}
+                >
+                    <TextField
+                        id={promptTemplateFieldId}
+                        className={styles.chatSettingsSeparator}
+                        defaultValue={promptTemplate}
+                        label={t("labels.promptTemplate")}
+                        multiline
+                        autoAdjustHeight
+                        onChange={onPromptTemplateChange}
+                        aria-labelledby={promptTemplateId}
+                        onRenderLabel={(props: ITextFieldProps | undefined) => (
+                            <HelpCallout
+                                labelId={promptTemplateId}
+                                fieldId={promptTemplateFieldId}
+                                helpText={t("helpTexts.promptTemplate")}
+                                label={props?.label}
+                            />
+                        )}
+                    />
+
+                    <TextField
+                        id={temperatureFieldId}
+                        className={styles.chatSettingsSeparator}
+                        label={t("labels.temperature")}
+                        type="number"
+                        min={0}
+                        max={1}
+                        step={0.1}
+                        defaultValue={temperature.toString()}
+                        onChange={onTemperatureChange}
+                        aria-labelledby={temperatureId}
+                        onRenderLabel={(props: ITextFieldProps | undefined) => (
+                            <HelpCallout labelId={temperatureId} fieldId={temperatureFieldId} helpText={t("helpTexts.temperature")} label={props?.label} />
+                        )}
+                    />
+
+                    <TextField
+                        id={seedFieldId}
+                        className={styles.chatSettingsSeparator}
+                        label={t("labels.seed")}
+                        type="text"
+                        defaultValue={seed?.toString() || ""}
+                        onChange={onSeedChange}
+                        aria-labelledby={seedId}
+                        onRenderLabel={(props: ITextFieldProps | undefined) => (
+                            <HelpCallout labelId={seedId} fieldId={seedFieldId} helpText={t("helpTexts.seed")} label={props?.label} />
+                        )}
+                    />
+
+                    <TextField
+                        id={searchScoreFieldId}
+                        className={styles.chatSettingsSeparator}
+                        label={t("labels.minimumSearchScore")}
+                        type="number"
+                        min={0}
+                        step={0.01}
+                        defaultValue={minimumSearchScore.toString()}
+                        onChange={onMinimumSearchScoreChange}
+                        aria-labelledby={searchScoreId}
+                        onRenderLabel={(props: ITextFieldProps | undefined) => (
+                            <HelpCallout labelId={searchScoreId} fieldId={searchScoreFieldId} helpText={t("helpTexts.searchScore")} label={props?.label} />
+                        )}
+                    />
+
+                    {showSemanticRankerOption && (
+                        <TextField
+                            id={rerankerScoreFieldId}
+                            className={styles.chatSettingsSeparator}
+                            label={t("labels.minimumRerankerScore")}
+                            type="number"
+                            min={1}
+                            max={4}
+                            step={0.1}
+                            defaultValue={minimumRerankerScore.toString()}
+                            onChange={onMinimumRerankerScoreChange}
+                            aria-labelledby={rerankerScoreId}
+                            onRenderLabel={(props: ITextFieldProps | undefined) => (
+                                <HelpCallout
+                                    labelId={rerankerScoreId}
+                                    fieldId={rerankerScoreFieldId}
+                                    helpText={t("helpTexts.rerankerScore")}
+                                    label={props?.label}
+                                />
+                            )}
+                        />
+                    )}
+
+                    <TextField
+                        id={retrieveCountFieldId}
+                        className={styles.chatSettingsSeparator}
+                        label={t("labels.retrieveCount")}
+                        type="number"
+                        min={1}
+                        max={50}
+                        defaultValue={retrieveCount.toString()}
+                        onChange={onRetrieveCountChange}
+                        aria-labelledby={retrieveCountId}
+                        onRenderLabel={(props: ITextFieldProps | undefined) => (
+                            <HelpCallout
+                                labelId={retrieveCountId}
+                                fieldId={retrieveCountFieldId}
+                                helpText={t("helpTexts.retrieveNumber")}
+                                label={props?.label}
+                            />
+                        )}
+                    />
+
+                    <TextField
+                        id={excludeCategoryFieldId}
+                        className={styles.chatSettingsSeparator}
+                        label={t("labels.excludeCategory")}
+                        defaultValue={excludeCategory}
+                        onChange={onExcludeCategoryChanged}
+                        aria-labelledby={excludeCategoryId}
+                        onRenderLabel={(props: ITextFieldProps | undefined) => (
+                            <HelpCallout
+                                labelId={excludeCategoryId}
+                                fieldId={excludeCategoryFieldId}
+                                helpText={t("helpTexts.excludeCategory")}
+                                label={props?.label}
+                            />
+                        )}
+                    />
+
+                    {showSemanticRankerOption && (
+                        <>
+                            <Checkbox
+                                id={semanticRankerFieldId}
+                                className={styles.chatSettingsSeparator}
+                                checked={useSemanticRanker}
+                                label={t("labels.useSemanticRanker")}
+                                onChange={onUseSemanticRankerChange}
+                                aria-labelledby={semanticRankerId}
+                                onRenderLabel={(props: ICheckboxProps | undefined) => (
+                                    <HelpCallout
+                                        labelId={semanticRankerId}
+                                        fieldId={semanticRankerFieldId}
+                                        helpText={t("helpTexts.useSemanticReranker")}
+                                        label={props?.label}
+                                    />
+                                )}
+                            />
+
+                            <Checkbox
+                                id={semanticCaptionsFieldId}
+                                className={styles.chatSettingsSeparator}
+                                checked={useSemanticCaptions}
+                                label={t("labels.useSemanticCaptions")}
+                                onChange={onUseSemanticCaptionsChange}
+                                disabled={!useSemanticRanker}
+                                aria-labelledby={semanticCaptionsId}
+                                onRenderLabel={(props: ICheckboxProps | undefined) => (
+                                    <HelpCallout
+                                        labelId={semanticCaptionsId}
+                                        fieldId={semanticCaptionsFieldId}
+                                        helpText={t("helpTexts.useSemanticCaptions")}
+                                        label={props?.label}
+                                    />
+                                )}
+                            />
+                        </>
+                    )}
+
+                    <Checkbox
+                        id={suggestFollowupQuestionsFieldId}
+                        className={styles.chatSettingsSeparator}
+                        checked={useSuggestFollowupQuestions}
+                        label={t("labels.useSuggestFollowupQuestions")}
+                        onChange={onUseSuggestFollowupQuestionsChange}
+                        aria-labelledby={suggestFollowupQuestionsId}
+                        onRenderLabel={(props: ICheckboxProps | undefined) => (
+                            <HelpCallout
+                                labelId={suggestFollowupQuestionsId}
+                                fieldId={suggestFollowupQuestionsFieldId}
+                                helpText={t("helpTexts.suggestFollowupQuestions")}
+                                label={props?.label}
+                            />
+                        )}
+                    />
+
+                    {showGPT4VOptions && (
+                        <GPT4VSettings
+                            gpt4vInputs={gpt4vInput}
+                            isUseGPT4V={useGPT4V}
+                            updateUseGPT4V={useGPT4V => {
+                                setUseGPT4V(useGPT4V);
+                            }}
+                            updateGPT4VInputs={inputs => setGPT4VInput(inputs)}
+                        />
+                    )}
+
+                    {showVectorOption && (
+                        <VectorSettings
+                            defaultRetrievalMode={retrievalMode}
+                            showImageOptions={useGPT4V && showGPT4VOptions}
+                            updateVectorFields={(options: VectorFieldOptions[]) => setVectorFieldList(options)}
+                            updateRetrievalMode={(retrievalMode: RetrievalMode) => setRetrievalMode(retrievalMode)}
+                        />
+                    )}
+
+                    {useLogin && (
+                        <>
+                            <Checkbox
+                                id={useOidSecurityFilterFieldId}
+                                className={styles.chatSettingsSeparator}
+                                checked={useOidSecurityFilter || requireAccessControl}
+                                label={t("labels.useOidSecurityFilter")}
+                                disabled={!loggedIn || requireAccessControl}
+                                onChange={onUseOidSecurityFilterChange}
+                                aria-labelledby={useOidSecurityFilterId}
+                                onRenderLabel={(props: ICheckboxProps | undefined) => (
+                                    <HelpCallout
+                                        labelId={useOidSecurityFilterId}
+                                        fieldId={useOidSecurityFilterFieldId}
+                                        helpText={t("helpTexts.useOidSecurityFilter")}
+                                        label={props?.label}
+                                    />
+                                )}
+                            />
+                            <Checkbox
+                                id={useGroupsSecurityFilterFieldId}
+                                className={styles.chatSettingsSeparator}
+                                checked={useGroupsSecurityFilter || requireAccessControl}
+                                label={t("labels.useGroupsSecurityFilter")}
+                                disabled={!loggedIn || requireAccessControl}
+                                onChange={onUseGroupsSecurityFilterChange}
+                                aria-labelledby={useGroupsSecurityFilterId}
+                                onRenderLabel={(props: ICheckboxProps | undefined) => (
+                                    <HelpCallout
+                                        labelId={useGroupsSecurityFilterId}
+                                        fieldId={useGroupsSecurityFilterFieldId}
+                                        helpText={t("helpTexts.useGroupsSecurityFilter")}
+                                        label={props?.label}
+                                    />
+                                )}
+                            />
+                        </>
+                    )}
+
+                    <Checkbox
+                        id={shouldStreamFieldId}
+                        className={styles.chatSettingsSeparator}
+                        checked={shouldStream}
+                        label={t("labels.shouldStream")}
+                        onChange={onShouldStreamChange}
+                        aria-labelledby={shouldStreamId}
+                        onRenderLabel={(props: ICheckboxProps | undefined) => (
+                            <HelpCallout labelId={shouldStreamId} fieldId={shouldStreamFieldId} helpText={t("helpTexts.streamChat")} label={props?.label} />
+                        )}
+                    />
+
+                    {useLogin && <TokenClaimsDisplay />}
+                </Panel>
             </div>
         </div>
     );

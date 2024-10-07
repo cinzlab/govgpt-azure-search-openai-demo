@@ -369,15 +369,18 @@ var defaultOpenAiDeployments = [
   }
 ]
 
-var openAiDeployments = concat(defaultOpenAiDeployments, useGPT4V ? [
-    {
-      name: gpt4vDeploymentName
-      model: {
-        format: 'OpenAI'
-        name: gpt4vModelName
-        version: gpt4vModelVersion
-      }
-      sku: {
+var openAiDeployments = concat(
+  defaultOpenAiDeployments,
+  useGPT4V
+    ? [
+        {
+          name: gpt4vDeploymentName
+          model: {
+            format: 'OpenAI'
+            name: gpt4vModelName
+            version: gpt4vModelVersion
+          }
+          sku: {
         name: 'GlobalStandard'
         capacity: gpt4vDeploymentCapacity
       }
