@@ -1,5 +1,6 @@
-# Should include table from Circle.
+# Below is a high-level list of pages we've indexed.
 
+You can find detailed lists above - note that some pages were not indexed programatically and will not be included here.
 
 | Page | Description |
 | --- | --- |
