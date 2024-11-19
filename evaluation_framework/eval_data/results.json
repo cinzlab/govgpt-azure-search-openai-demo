@@ -1,0 +1,632 @@
+{
+    "test_results": [
+        {
+            "name": "test_case_0",
+            "success": true,
+            "metrics_data": [
+                {
+                    "name": "Contextual Precision",
+                    "threshold": 0.5,
+                    "success": true,
+                    "score": 1.0,
+                    "reason": null,
+                    "strict_mode": false,
+                    "evaluation_model": "Azure OpenAI Model - cilabs-govgptuat-chat4o",
+                    "error": null,
+                    "evaluation_cost": null,
+                    "verbose_logs": "Verdicts:\n[\n    {\n        \"verdict\": \"yes\",\n        \"reason\": \"The context 'equashion 1 + 1 is simple math equashion with answer - 2' directly provides the answer to the question '1 + 1 equal?' by stating that the answer is 2.\"\n    }\n]"
+                },
+                {
+                    "name": "Contextual Recall",
+                    "threshold": 0.5,
+                    "success": true,
+                    "score": 1.0,
+                    "reason": null,
+                    "strict_mode": false,
+                    "evaluation_model": "Azure OpenAI Model - cilabs-govgptuat-chat4o",
+                    "error": null,
+                    "evaluation_cost": null,
+                    "verbose_logs": "Verdicts:\n[\n    {\n        \"verdict\": \"yes\",\n        \"reason\": \"The sentence '1 + 1 is 2' can be attributed to the 1st node in the retrieval context: 'equashion 1 + 1 is simple math equashion with answer - 2'.\"\n    }\n]"
+                },
+                {
+                    "name": "Contextual Relevancy",
+                    "threshold": 0.5,
+                    "success": true,
+                    "score": 1.0,
+                    "reason": null,
+                    "strict_mode": false,
+                    "evaluation_model": "Azure OpenAI Model - cilabs-govgptuat-chat4o",
+                    "error": null,
+                    "evaluation_cost": null,
+                    "verbose_logs": "Verdicts:\n[\n    {\n        \"verdicts\": [\n            {\n                \"statement\": \"equashion 1 + 1 is simple math equashion with answer - 2\",\n                \"verdict\": \"yes\",\n                \"reason\": null\n            }\n        ]\n    }\n]"
+                },
+                {
+                    "name": "Answer Relevancy",
+                    "threshold": 0.5,
+                    "success": true,
+                    "score": 1.0,
+                    "reason": null,
+                    "strict_mode": false,
+                    "evaluation_model": "Azure OpenAI Model - cilabs-govgptuat-chat4o",
+                    "error": null,
+                    "evaluation_cost": null,
+                    "verbose_logs": "Statements:\n[\n    \"answer on this one: 1 + 1 is 2\"\n] \n \nVerdicts:\n[\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    }\n]"
+                },
+                {
+                    "name": "Faithfulness",
+                    "threshold": 0.5,
+                    "success": true,
+                    "score": 1.0,
+                    "reason": null,
+                    "strict_mode": false,
+                    "evaluation_model": "Azure OpenAI Model - cilabs-govgptuat-chat4o",
+                    "error": null,
+                    "evaluation_cost": null,
+                    "verbose_logs": "Truths (limit=None):\n[\n    \"1 + 1 is a simple math equation.\",\n    \"The answer to 1 + 1 is 2.\"\n] \n \nClaims:\n[\n    \"1 + 1 is 2.\"\n] \n \nVerdicts:\n[\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    }\n]"
+                },
+                {
+                    "name": "Correctness (GEval)",
+                    "threshold": 0.5,
+                    "success": true,
+                    "score": 0.9,
+                    "reason": "The actual output correctly answers the question '1 + 1 equal?' by stating '1 + 1 is 2', which matches the expected result. The phrasing is slightly different but does not affect the factual accuracy or logical consistency.",
+                    "strict_mode": false,
+                    "evaluation_model": "Azure OpenAI Model - cilabs-govgptuat-chat4o",
+                    "error": null,
+                    "evaluation_cost": null,
+                    "verbose_logs": "Criteria:\nDetermine whether the actual output is factually correct based on the expected output. \n \nEvaluation Steps:\n[\n    \"Compare the actual output with the expected output to identify any discrepancies.\",\n    \"Verify the factual accuracy of the actual output by cross-referencing with reliable sources.\",\n    \"Check if the actual output logically follows from the input and aligns with the expected output.\",\n    \"Ensure that the actual output meets the requirements and criteria outlined in the expected output.\"\n]"
+                }
+            ],
+            "conversational": false,
+            "multimodal": false,
+            "input": "answer a question: 1 + 1 equal?",
+            "actual_output": "answer on this one: 1 + 1 is 2",
+            "expected_output": "answer on this one: 1 + 1 is 2",
+            "context": [
+                "equashion 1 + 1 is simple math equashion with answer - 2"
+            ],
+            "retrieval_context": [
+                "equashion 1 + 1 is simple math equashion with answer - 2"
+            ]
+        },
+        {
+            "name": "test_case_1",
+            "success": true,
+            "metrics_data": [
+                {
+                    "name": "Contextual Precision",
+                    "threshold": 0.5,
+                    "success": true,
+                    "score": 1.0,
+                    "reason": null,
+                    "strict_mode": false,
+                    "evaluation_model": "Azure OpenAI Model - cilabs-govgptuat-chat4o",
+                    "error": null,
+                    "evaluation_cost": null,
+                    "verbose_logs": "Verdicts:\n[\n    {\n        \"verdict\": \"yes\",\n        \"reason\": \"The context 'equashion 1 + 2 is simple math equashion with answer - 3' directly provides the answer to the question by stating that the answer is 3.\"\n    }\n]"
+                },
+                {
+                    "name": "Contextual Recall",
+                    "threshold": 0.5,
+                    "success": true,
+                    "score": 1.0,
+                    "reason": null,
+                    "strict_mode": false,
+                    "evaluation_model": "Azure OpenAI Model - cilabs-govgptuat-chat4o",
+                    "error": null,
+                    "evaluation_cost": null,
+                    "verbose_logs": "Verdicts:\n[\n    {\n        \"verdict\": \"yes\",\n        \"reason\": \"The sentence '1 + 2 is 3' can be attributed to the 1st node in the retrieval context, which states '1 + 2 is simple math equashion with answer - 3'.\"\n    }\n]"
+                },
+                {
+                    "name": "Contextual Relevancy",
+                    "threshold": 0.5,
+                    "success": true,
+                    "score": 1.0,
+                    "reason": null,
+                    "strict_mode": false,
+                    "evaluation_model": "Azure OpenAI Model - cilabs-govgptuat-chat4o",
+                    "error": null,
+                    "evaluation_cost": null,
+                    "verbose_logs": "Verdicts:\n[\n    {\n        \"verdicts\": [\n            {\n                \"statement\": \"equashion 1 + 2 is simple math equashion with answer - 3\",\n                \"verdict\": \"yes\",\n                \"reason\": null\n            }\n        ]\n    }\n]"
+                },
+                {
+                    "name": "Answer Relevancy",
+                    "threshold": 0.5,
+                    "success": true,
+                    "score": 1.0,
+                    "reason": null,
+                    "strict_mode": false,
+                    "evaluation_model": "Azure OpenAI Model - cilabs-govgptuat-chat4o",
+                    "error": null,
+                    "evaluation_cost": null,
+                    "verbose_logs": "Statements:\n[\n    \"answer on this one: 1 + 2 is 3\"\n] \n \nVerdicts:\n[\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    }\n]"
+                },
+                {
+                    "name": "Faithfulness",
+                    "threshold": 0.5,
+                    "success": true,
+                    "score": 1.0,
+                    "reason": null,
+                    "strict_mode": false,
+                    "evaluation_model": "Azure OpenAI Model - cilabs-govgptuat-chat4o",
+                    "error": null,
+                    "evaluation_cost": null,
+                    "verbose_logs": "Truths (limit=None):\n[\n    \"1 + 2 is a simple math equation.\",\n    \"The answer to 1 + 2 is 3.\"\n] \n \nClaims:\n[\n    \"1 + 2 is 3.\"\n] \n \nVerdicts:\n[\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    }\n]"
+                },
+                {
+                    "name": "Correctness (GEval)",
+                    "threshold": 0.5,
+                    "success": true,
+                    "score": 1.0,
+                    "reason": "The actual output correctly answers the question by stating that 1 + 2 is 3, which matches the expected output. The factual accuracy is verified as the mathematical addition is correct. The response aligns with the context of the input question, and no critical information is missing or misrepresented.",
+                    "strict_mode": false,
+                    "evaluation_model": "Azure OpenAI Model - cilabs-govgptuat-chat4o",
+                    "error": null,
+                    "evaluation_cost": null,
+                    "verbose_logs": "Criteria:\nDetermine whether the actual output is factually correct based on the expected output. \n \nEvaluation Steps:\n[\n    \"Compare the actual output with the expected output to identify any discrepancies.\",\n    \"Verify the factual accuracy of the actual output by cross-referencing with reliable sources.\",\n    \"Check if the actual output aligns with the context and requirements outlined in the input.\",\n    \"Determine if any critical information is missing or misrepresented in the actual output.\"\n]"
+                }
+            ],
+            "conversational": false,
+            "multimodal": false,
+            "input": "answer a question: 1 + 2 equal?",
+            "actual_output": "answer on this one: 1 + 2 is 3",
+            "expected_output": "answer on this one: 1 + 2 is 3",
+            "context": [
+                "equashion 1 + 1 is simple math equashion with answer - 2"
+            ],
+            "retrieval_context": [
+                "equashion 1 + 2 is simple math equashion with answer - 3"
+            ]
+        },
+        {
+            "name": "test_case_2",
+            "success": true,
+            "metrics_data": [
+                {
+                    "name": "Contextual Precision",
+                    "threshold": 0.5,
+                    "success": true,
+                    "score": 1.0,
+                    "reason": null,
+                    "strict_mode": false,
+                    "evaluation_model": "Azure OpenAI Model - cilabs-govgptuat-chat4o",
+                    "error": null,
+                    "evaluation_cost": null,
+                    "verbose_logs": "Verdicts:\n[\n    {\n        \"verdict\": \"yes\",\n        \"reason\": \"The context explains that electronic signature software must capture authentication, time, and source details, and maintain them in their original form, ensuring the document is authentic and not altered after signing.\"\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": \"The context mentions that if the authenticity of an electronic signature is questioned, one must demonstrate the validity of the software used, which aligns with ensuring the integrity of the signature.\"\n    },\n    {\n        \"verdict\": \"no\",\n        \"reason\": \"This context defines what an electronic signature is and where it can be used, but does not directly address how authentication, time, and source details ensure signature integrity.\"\n    }\n]"
+                },
+                {
+                    "name": "Contextual Recall",
+                    "threshold": 0.5,
+                    "success": true,
+                    "score": 1.0,
+                    "reason": null,
+                    "strict_mode": false,
+                    "evaluation_model": "Azure OpenAI Model - cilabs-govgptuat-chat4o",
+                    "error": null,
+                    "evaluation_cost": null,
+                    "verbose_logs": "Verdicts:\n[\n    {\n        \"verdict\": \"yes\",\n        \"reason\": \"The 1st node mentions 'authentication, time and source details' and maintaining them in original form, aligning with the sentence about ensuring electronic signature integrity.\"\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": \"The 1st node states that details must be 'maintained in its original form with no amendments,' supporting the sentence about maintaining information in its original form.\"\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": \"The 1st node mentions 'full knowledge and agreement' and 'wasn't amended after your electronic signature was added,' which aligns with confirming the signer's knowledge and agreement.\"\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": \"The 1st node mentions 'wasn't amended after your electronic signature was added,' supporting the sentence about changes being clearly marked post-signature.\"\n    }\n]"
+                },
+                {
+                    "name": "Contextual Relevancy",
+                    "threshold": 0.5,
+                    "success": true,
+                    "score": 0.5,
+                    "reason": null,
+                    "strict_mode": false,
+                    "evaluation_model": "Azure OpenAI Model - cilabs-govgptuat-chat4o",
+                    "error": null,
+                    "evaluation_cost": null,
+                    "verbose_logs": "Verdicts:\n[\n    {\n        \"verdicts\": [\n            {\n                \"statement\": \"Where a document with your electronic signature has been filed with us, you must use electronic signature software that captures authentication, time and source details.\",\n                \"verdict\": \"yes\",\n                \"reason\": null\n            },\n            {\n                \"statement\": \"These details must be held within the software itself, in the form of a file that is maintained in its original form with no amendments, and can be provided to us, if requested, within a specified time.\",\n                \"verdict\": \"yes\",\n                \"reason\": null\n            },\n            {\n                \"statement\": \"Once a document with your electronic signature has been filed with us, we consider the information has been provided with your full knowledge and agreement, is authentic and accurate, wasn't amended after your electronic signature was added to the document, unless a change has been clearly marked on the document.\",\n                \"verdict\": \"yes\",\n                \"reason\": null\n            },\n            {\n                \"statement\": \"You're responsible for safeguarding how and when your electronic signature and credentials are used on documents and information, managing who has authority to use your electronic signature on your behalf, for example, a chartered accountant.\",\n                \"verdict\": \"no\",\n                \"reason\": \"The statement focuses on the user's responsibility for safeguarding and managing the use of their electronic signature, which does not directly address how authentication, time, and source details ensure electronic signature integrity.\"\n            }\n        ]\n    },\n    {\n        \"verdicts\": [\n            {\n                \"statement\": \"If your electronic signature on a document or information is filed with us, you won't be able to dispute having signed and approved the document or information.\",\n                \"verdict\": \"no\",\n                \"reason\": \"The statement does not address how authentication, time, and source details ensure electronic signature integrity.\"\n            },\n            {\n                \"statement\": \"If we question the authenticity of an electronic signature or online transaction, you must be able to demonstrate on request the validity of the software used to apply your electronic signature to the document.\",\n                \"verdict\": \"no\",\n                \"reason\": \"The statement focuses on demonstrating the validity of the software, not on how authentication, time, and source details ensure integrity.\"\n            },\n            {\n                \"statement\": \"Keeping records When signing documents electronically, please make sure you follow our standard for using electronic signatures.\",\n                \"verdict\": \"no\",\n                \"reason\": \"The statement advises on following standards but does not explain how authentication, time, and source details ensure integrity.\"\n            },\n            {\n                \"statement\": \"The file must be treated as a record, as defined by the Companies Act 1993, and a business record as defined by the Evidence Act 2006.\",\n                \"verdict\": \"no\",\n                \"reason\": \"The statement is about legal definitions of records, not about how authentication, time, and source details ensure integrity.\"\n            },\n            {\n                \"statement\": \"Be aware that your documents signed electronically will be rejected if they didn\\u2019t capture authentication, time and source details at the time of applying an electronic signature (when using a software).\",\n                \"verdict\": \"yes\",\n                \"reason\": null\n            }\n        ]\n    },\n    {\n        \"verdicts\": [\n            {\n                \"statement\": \"\\u2018Electronic signature\\u2019, in relation to information in electronic form, means a method used to identify a person and to indicate that person\\u2019s approval of that information.\",\n                \"verdict\": \"yes\",\n                \"reason\": null\n            },\n            {\n                \"statement\": \"The Companies Office accepts electronic signatures on the following types of documents on the Companies Register: financial statements, director consents, shareholder consents, directors\\u2019 certificates for issue of shares or options, resolutions of solvency, notices of proposed compromise, amalgamations.\",\n                \"verdict\": \"no\",\n                \"reason\": \"The statement lists types of documents accepted by the Companies Office, which does not directly relate to how authentication, time, and source details ensure electronic signature integrity.\"\n            },\n            {\n                \"statement\": \"You can only file documents and information with us using an electronic signature if you're the signatory, or have authority to act on behalf of the signatory, and are using one of our online services, and using software that complies with our standards, in particular keeping records of transactions where an electronic signature has been used.\",\n                \"verdict\": \"yes\",\n                \"reason\": null\n            }\n        ]\n    }\n]"
+                },
+                {
+                    "name": "Answer Relevancy",
+                    "threshold": 0.5,
+                    "success": true,
+                    "score": 1.0,
+                    "reason": null,
+                    "strict_mode": false,
+                    "evaluation_model": "Azure OpenAI Model - cilabs-govgptuat-chat4o",
+                    "error": null,
+                    "evaluation_cost": null,
+                    "verbose_logs": "Statements:\n[\n    \"Authentication, time, and source details are crucial for ensuring the integrity of electronic signatures.\",\n    \"These elements are captured by electronic signature software and serve several purposes.\",\n    \"Authentication.\",\n    \"This confirms the identity of the person signing the document, ensuring that the signature is genuine and belongs to the correct individual.\",\n    \"It helps in verifying that the document was signed with the signatory's full knowledge and agreement.\",\n    \"Time Details.\",\n    \"Recording the time when the signature was applied ensures that the document's signing is traceable and can be verified as having occurred at a specific moment.\",\n    \"This helps in maintaining the document's authenticity and accuracy, as it shows that no amendments were made after the signature was added unless clearly marked.\",\n    \"Source Details.\",\n    \"These details indicate where the signature originated, providing an additional layer of verification.\",\n    \"It ensures that the document was signed using the appropriate software and that the signature was not tampered with or copied from another source.\",\n    \"These details must be maintained in their original form within the software and can be provided upon request to demonstrate the validity of the electronic signature.\",\n    \"This process helps prevent disputes over the authenticity of the signature and ensures compliance with legal standards.\"\n] \n \nVerdicts:\n[\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"idk\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"idk\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"idk\",\n        \"reason\": null\n    }\n]"
+                },
+                {
+                    "name": "Faithfulness",
+                    "threshold": 0.5,
+                    "success": true,
+                    "score": 1.0,
+                    "reason": null,
+                    "strict_mode": false,
+                    "evaluation_model": "Azure OpenAI Model - cilabs-govgptuat-chat4o",
+                    "error": null,
+                    "evaluation_cost": null,
+                    "verbose_logs": "Truths (limit=None):\n[\n    \"Electronic signatures must capture authentication, time, and source details.\",\n    \"Electronic signature details must be maintained in their original form with no amendments.\",\n    \"Electronic signature details can be requested and must be provided within a specified time.\",\n    \"Once a document with an electronic signature is filed, it is considered provided with full knowledge and agreement.\",\n    \"A document with an electronic signature is considered authentic and accurate unless amended with clear markings.\",\n    \"Individuals are responsible for safeguarding the use of their electronic signature and credentials.\",\n    \"Individuals must manage who has authority to use their electronic signature on their behalf.\",\n    \"If an electronic signature is filed, it cannot be disputed as having been signed and approved.\",\n    \"The validity of the software used for electronic signatures must be demonstrable if questioned.\",\n    \"Electronic signature files must be treated as records under the Companies Act 1993 and Evidence Act 2006.\",\n    \"Documents with cut and pasted signatures or those created using a touch screen without capturing details will be rejected.\",\n    \"An electronic signature is a method to identify a person and indicate approval of information.\",\n    \"The Companies Office accepts electronic signatures on financial statements, director consents, shareholder consents, directors\u2019 certificates for issue of shares or options, resolutions of solvency, notices of proposed compromise, and amalgamations.\",\n    \"Documents can only be filed with an electronic signature if the filer is the signatory or has authority to act on behalf of the signatory.\",\n    \"Documents must be filed using online services and software that complies with standards, particularly for record-keeping.\"\n] \n \nClaims:\n[\n    \"Authentication, time, and source details are crucial for ensuring the integrity of electronic signatures.\",\n    \"Authentication confirms the identity of the person signing the document, ensuring that the signature is genuine and belongs to the correct individual.\",\n    \"Authentication helps in verifying that the document was signed with the signatory's full knowledge and agreement.\",\n    \"Recording the time when the signature was applied ensures that the document's signing is traceable and can be verified as having occurred at a specific moment.\",\n    \"Recording the time helps in maintaining the document's authenticity and accuracy, as it shows that no amendments were made after the signature was added unless clearly marked.\",\n    \"Source details indicate where the signature originated, providing an additional layer of verification.\",\n    \"Source details ensure that the document was signed using the appropriate software and that the signature was not tampered with or copied from another source.\",\n    \"Details must be maintained in their original form within the software and can be provided upon request to demonstrate the validity of the electronic signature.\",\n    \"Maintaining these details helps prevent disputes over the authenticity of the signature and ensures compliance with legal standards.\"\n] \n \nVerdicts:\n[\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"idk\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"idk\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"idk\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"idk\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    }\n]"
+                },
+                {
+                    "name": "Correctness (GEval)",
+                    "threshold": 0.5,
+                    "success": true,
+                    "score": 0.9,
+                    "reason": "The actual output accurately explains how authentication, time, and source details ensure electronic signature integrity, aligning well with the input question. It provides a clear breakdown of each element's role in maintaining signature integrity, which matches the expected output. The information is factually accurate and logically follows from the input, meeting the criteria outlined.",
+                    "strict_mode": false,
+                    "evaluation_model": "Azure OpenAI Model - cilabs-govgptuat-chat4o",
+                    "error": null,
+                    "evaluation_cost": null,
+                    "verbose_logs": "Criteria:\nDetermine whether the actual output is factually correct based on the expected output. \n \nEvaluation Steps:\n[\n    \"Compare the actual output with the expected output to identify any discrepancies.\",\n    \"Verify the factual accuracy of the actual output by cross-referencing with reliable sources.\",\n    \"Check if the actual output logically follows from the input and aligns with the expected output.\",\n    \"Assess whether the actual output meets the requirements and criteria outlined in the expected output.\"\n]"
+                }
+            ],
+            "conversational": false,
+            "multimodal": false,
+            "input": "How do authentication, time, and source details ensure electronic signature integrity?",
+            "actual_output": "Authentication, time, and source details are crucial for ensuring the integrity of electronic signatures. These elements are captured by electronic signature software and serve several purposes:\n\n1. **Authentication**: This confirms the identity of the person signing the document, ensuring that the signature is genuine and belongs to the correct individual. It helps in verifying that the document was signed with the signatory's full knowledge and agreement [filing-documents-with-electronic-signatures.html].\n\n2. **Time Details**: Recording the time when the signature was applied ensures that the document's signing is traceable and can be verified as having occurred at a specific moment. This helps in maintaining the document's authenticity and accuracy, as it shows that no amendments were made after the signature was added unless clearly marked [filing-documents-with-electronic-signatures.html].\n\n3. **Source Details**: These details indicate where the signature originated, providing an additional layer of verification. It ensures that the document was signed using the appropriate software and that the signature was not tampered with or copied from another source [filing-documents-with-electronic-signatures.html].\n\nThese details must be maintained in their original form within the software and can be provided upon request to demonstrate the validity of the electronic signature. This process helps prevent disputes over the authenticity of the signature and ensures compliance with legal standards [filing-documents-with-electronic-signatures.html].",
+            "expected_output": "Authentication, time, and source details ensure electronic signature integrity by providing a verifiable record of who signed the document, when it was signed, and where the signature originated. This information is captured and maintained in its original form within the electronic signature software, ensuring that the document is authentic and has not been altered after signing. These details help confirm that the signature was applied with the signer's full knowledge and agreement, and any changes made post-signature are clearly marked, thereby safeguarding the integrity of the signed document.",
+            "context": [
+                "Where a document with your electronic signature has been filed with us, you must use electronic signature software that captures authentication, time and source details.\n       \n\n       \n        These details must be held within the software itself, in the form of a file that:\n       \n\n       \t\n         is maintained in its original form with no amendments, and\n        \n\t\n         can be provided to us, if requested, within a specified time.\n        \n\n\n       \n        Controlling when and how your signature is used\n       \n\n       \n        Once a document with your electronic signature has been filed with us, we consider the information:\n       \n\n       \t\n         has been provided with your full knowledge and agreement\n        \n\t\n         is authentic and accurate\n        \n\t\n         wasn't amended after your electronic signature was added to the document, unless a change has been clearly marked on the document.\n        \n\n\n       \n        You're responsible for:\n       \n\n       \t\n         safeguarding how and when your electronic signature and credentials are used on documents and information\n        \n\t\n         managing who has authority to use your electronic signature on your behalf, for example, a chartered accountant.\n        \n\n\n       \n        \n        \n        \n         \n         \n        \n        \n         Important"
+            ],
+            "retrieval_context": [
+                "filing-documents-with-electronic-signatures.html: Where a document with your electronic signature has been filed with us, you must use electronic signature software that captures authentication, time and source details.                          These details must be held within the software itself, in the form of a file that:                 \t          is maintained in its original form with no amendments, and          \t          can be provided to us, if requested, within a specified time.                            Controlling when and how your signature is used                          Once a document with your electronic signature has been filed with us, we consider the information:                 \t          has been provided with your full knowledge and agreement          \t          is authentic and accurate          \t          wasn't amended after your electronic signature was added to the document, unless a change has been clearly marked on the document.                            You're responsible for:                 \t          safeguarding how and when your electronic signature and credentials are used on documents and information          \t          managing who has authority to use your electronic signature on your behalf, for example, a chartered accountant.                                                                                              Important",
+                "filing-documents-with-electronic-signatures.html: If your electronic signature on a document or information is filed with us, you won't be able to dispute having signed and approved the document or information.                     If we question the authenticity of an electronic signature or online transaction, you must be able to demonstrate on request the validity of the software used to apply your electronic signature to the document.                                              Keeping records                          When signing documents electronically, please make sure you follow our standard for using electronic signatures.                 \t                     Standard for the use of a valid electronic signature on documents                                      The file must be treated as a record, as defined by the                   Companies Act 1993                                                                                , and a business record as defined by the                   Evidence Act 2006                                                                                .                          Avoiding rejection                          Be aware that your documents signed electronically will be rejected if they:                 \t          have signatures that have been cut and pasted, or created using a touch screen, and          \t          didn\u2019t capture authentication, time and source details at the time of applying an electronic signature (when using a software), or",
+                "filing-documents-with-electronic-signatures.html: \u2018Electronic signature\u2019, in relation to information in electronic form, means a method used to identify a person and to indicate that person\u2019s approval of that information.                                                                                                                                                      Contract and Commercial Law Act 2017                                  New Zealand Legislation                                                                                                                                  When you can use an electronic signature                          The Companies Office accepts electronic signatures on the following types of documents on the Companies Register:                 \t          financial statements          \t          director consents          \t          shareholder consents          \t          directors\u2019 certificates for issue of shares or options          \t          resolutions of solvency          \t          notices of proposed compromise          \t          amalgamations.                            You can only file documents and information with us using an electronic signature if you're the signatory, or have authority to act on behalf of the signatory, and are:                 \t          using one of our online services, and          \t          using software that complies with our standards, in particular keeping records of transactions where an electronic signature has been used."
+            ]
+        },
+        {
+            "name": "test_case_3",
+            "success": false,
+            "metrics_data": [
+                {
+                    "name": "Contextual Precision",
+                    "threshold": 0.5,
+                    "success": true,
+                    "score": 1.0,
+                    "reason": null,
+                    "strict_mode": false,
+                    "evaluation_model": "Azure OpenAI Model - cilabs-govgptuat-chat4o",
+                    "error": null,
+                    "evaluation_cost": null,
+                    "verbose_logs": "Verdicts:\n[\n    {\n        \"verdict\": \"yes\",\n        \"reason\": \"The context mentions 'Public holidays rights for employees', 'Transferring a public holiday', 'Alternative holidays', and 'Restricted trading days for shops', which are directly relevant to the strategies employers use to manage public holidays with employee rights and trading restrictions.\"\n    }\n]"
+                },
+                {
+                    "name": "Contextual Recall",
+                    "threshold": 0.5,
+                    "success": true,
+                    "score": 0.8,
+                    "reason": null,
+                    "strict_mode": false,
+                    "evaluation_model": "Azure OpenAI Model - cilabs-govgptuat-chat4o",
+                    "error": null,
+                    "evaluation_cost": null,
+                    "verbose_logs": "Verdicts:\n[\n    {\n        \"verdict\": \"yes\",\n        \"reason\": \"1st node: 'Public holidays rights for employees' and 'Restricted trading days for shops' relate to compliance with employee rights and trading restrictions.\"\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": \"1st node: 'Public holidays rights for employees' mentions 'entitlements to paid leave on public holidays'.\"\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": \"1st node: 'Transferring a public holiday' and 'When a public holiday falls on a weekend' relate to transferring holidays.\"\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": \"1st node: 'Restricted trading days for shops' and 'Working and trading on Easter Sunday' relate to trading restrictions.\"\n    },\n    {\n        \"verdict\": \"no\",\n        \"reason\": \"The retrieval context does not mention 'strategic scheduling and clear communication with employees'.\"\n    }\n]"
+                },
+                {
+                    "name": "Contextual Relevancy",
+                    "threshold": 0.5,
+                    "success": true,
+                    "score": 0.8571428571428571,
+                    "reason": null,
+                    "strict_mode": false,
+                    "evaluation_model": "Azure OpenAI Model - cilabs-govgptuat-chat4o",
+                    "error": null,
+                    "evaluation_cost": null,
+                    "verbose_logs": "Verdicts:\n[\n    {\n        \"verdicts\": [\n            {\n                \"statement\": \"Public holidays rights for employees\",\n                \"verdict\": \"yes\",\n                \"reason\": null\n            },\n            {\n                \"statement\": \"Transferring a public holiday\",\n                \"verdict\": \"yes\",\n                \"reason\": null\n            },\n            {\n                \"statement\": \"Alternative holidays\",\n                \"verdict\": \"yes\",\n                \"reason\": null\n            },\n            {\n                \"statement\": \"When a public holiday falls on a weekend\",\n                \"verdict\": \"yes\",\n                \"reason\": null\n            },\n            {\n                \"statement\": \"Restricted trading days for shops\",\n                \"verdict\": \"yes\",\n                \"reason\": null\n            },\n            {\n                \"statement\": \"Working and trading on Easter Sunday\",\n                \"verdict\": \"yes\",\n                \"reason\": null\n            },\n            {\n                \"statement\": \"Annual holidays\",\n                \"verdict\": \"no\",\n                \"reason\": \"The statement 'Annual holidays' is too broad and does not specifically relate to the comparison of strategies employers use to manage public holidays with employee rights and trading restrictions.\"\n            }\n        ]\n    }\n]"
+                },
+                {
+                    "name": "Answer Relevancy",
+                    "threshold": 0.5,
+                    "success": false,
+                    "score": 0.3333333333333333,
+                    "reason": null,
+                    "strict_mode": false,
+                    "evaluation_model": "Azure OpenAI Model - cilabs-govgptuat-chat4o",
+                    "error": null,
+                    "evaluation_cost": null,
+                    "verbose_logs": "Statements:\n[\n    \"I can't provide a detailed comparison of strategies employers use to manage public holidays with employee rights and trading restrictions.\",\n    \"The specific information is not available in the provided sources.\",\n    \"If you have any other questions related to small business services and support, feel free to ask!\"\n] \n \nVerdicts:\n[\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"no\",\n        \"reason\": \"The statement indicates that the specific information is not available, which does not address the input question about comparing strategies.\"\n    },\n    {\n        \"verdict\": \"no\",\n        \"reason\": \"The statement invites further questions on a different topic, which is unrelated to the input question about comparing strategies for managing public holidays.\"\n    }\n]"
+                },
+                {
+                    "name": "Faithfulness",
+                    "threshold": 0.5,
+                    "success": true,
+                    "score": 1.0,
+                    "reason": null,
+                    "strict_mode": false,
+                    "evaluation_model": "Azure OpenAI Model - cilabs-govgptuat-chat4o",
+                    "error": null,
+                    "evaluation_cost": null,
+                    "verbose_logs": "Truths (limit=None):\n[\n    \"Employees have rights regarding public holidays.\",\n    \"There are provisions for transferring a public holiday.\",\n    \"There are alternative holidays available.\",\n    \"There are specific rules for when a public holiday falls on a weekend.\",\n    \"There are restricted trading days for shops.\",\n    \"There are regulations for working and trading on Easter Sunday.\",\n    \"Annual holidays are a recognized category.\"\n] \n \nClaims:\n[\n    \"The specific information on strategies employers use to manage public holidays with employee rights and trading restrictions is not available in the provided sources.\"\n] \n \nVerdicts:\n[\n    {\n        \"verdict\": \"idk\",\n        \"reason\": null\n    }\n]"
+                },
+                {
+                    "name": "Correctness (GEval)",
+                    "threshold": 0.5,
+                    "success": false,
+                    "score": 0.1,
+                    "reason": "The actual output fails to provide any comparison between employer strategies and employee rights or trading restrictions, which is the core requirement of the input. It also does not attempt to verify factual accuracy or logical alignment with the expected output, and it lacks any relevant information.",
+                    "strict_mode": false,
+                    "evaluation_model": "Azure OpenAI Model - cilabs-govgptuat-chat4o",
+                    "error": null,
+                    "evaluation_cost": null,
+                    "verbose_logs": "Criteria:\nDetermine whether the actual output is factually correct based on the expected output. \n \nEvaluation Steps:\n[\n    \"Compare the actual output with the expected output to identify any discrepancies.\",\n    \"Verify the factual accuracy of the actual output by cross-referencing with reliable sources.\",\n    \"Assess whether the actual output logically follows from the input and aligns with the expected output.\",\n    \"Determine if any information is missing or incorrectly stated in the actual output compared to the expected output.\"\n]"
+                }
+            ],
+            "conversational": false,
+            "multimodal": false,
+            "input": "Compare the strategies employers use to manage public holidays with employee rights and trading restrictions.",
+            "actual_output": "I can't provide a detailed comparison of strategies employers use to manage public holidays with employee rights and trading restrictions, as the specific information is not available in the provided sources. If you have any other questions related to small business services and support, feel free to ask!",
+            "expected_output": "Employers manage public holidays by ensuring compliance with employee rights and trading restrictions. Employee rights typically include entitlements to paid leave on public holidays or alternative holidays if they are required to work. Employers must also consider transferring public holidays to other days if necessary, especially when a holiday falls on a weekend. Trading restrictions, such as those on Easter Sunday, require some businesses to close or limit operations, impacting how employers plan staffing and operations during these times. Balancing these factors involves strategic scheduling and clear communication with employees to ensure both legal compliance and business continuity.",
+            "context": [
+                "Previous years: Public holidays and anniversary dates\n                    \n                   \n\t\n                    \n                     Managing public holidays as an employer\n                    \n                   \n\t\n                    \n                     Public holidays rights for employees\n                    \n                   \n\t\n                    \n                     Transferring a public holiday\n                    \n                   \n\t\n                    \n                     Alternative holidays\n                    \n                   \n\t\n                    \n                     When a public holiday falls on a weekend\n                    \n                   \n\t\n                    \n                     Restricted trading days for shops\n                    \n                   \n\t\n                    \n                     Working and trading on Easter Sunday\n                    \n                   \n\n\n                 \n\n                \n\n                \n                 \t\n                   \n                    Public holidays and anniversary dates\n                   \n                  \n\t\n                   \n                    Previous years: Public holidays and anniversary dates\n                   \n                  \n\t\n                   \n                    Managing public holidays as an employer"
+            ],
+            "retrieval_context": [
+                "types-of-worker.html: Public holidays rights for employees                                        \t                                         Transferring a public holiday                                        \t                                         Alternative holidays                                        \t                                         When a public holiday falls on a weekend                                        \t                                         Restricted trading days for shops                                        \t                                         Working and trading on Easter Sunday                                                                                           \t                                                                                                                                                                                                                           Annual holidays                                                                                                                                                                                                          Annual holidays                                                                                                                                                      Annual holidays"
+            ]
+        },
+        {
+            "name": "test_case_4",
+            "success": false,
+            "metrics_data": [
+                {
+                    "name": "Contextual Precision",
+                    "threshold": 0.5,
+                    "success": false,
+                    "score": 0.0,
+                    "reason": null,
+                    "strict_mode": false,
+                    "evaluation_model": "Azure OpenAI Model - cilabs-govgptuat-chat4o",
+                    "error": null,
+                    "evaluation_cost": null,
+                    "verbose_logs": "Verdicts:\n[]"
+                },
+                {
+                    "name": "Contextual Recall",
+                    "threshold": 0.5,
+                    "success": false,
+                    "score": 0.0,
+                    "reason": null,
+                    "strict_mode": false,
+                    "evaluation_model": "Azure OpenAI Model - cilabs-govgptuat-chat4o",
+                    "error": null,
+                    "evaluation_cost": null,
+                    "verbose_logs": "Verdicts:\n[\n    {\n        \"verdict\": \"no\",\n        \"reason\": \"The retrieval context is empty, so no sentences can be attributed to it.\"\n    },\n    {\n        \"verdict\": \"no\",\n        \"reason\": \"The retrieval context is empty, so no sentences can be attributed to it.\"\n    },\n    {\n        \"verdict\": \"no\",\n        \"reason\": \"The retrieval context is empty, so no sentences can be attributed to it.\"\n    },\n    {\n        \"verdict\": \"no\",\n        \"reason\": \"The retrieval context is empty, so no sentences can be attributed to it.\"\n    }\n]"
+                },
+                {
+                    "name": "Contextual Relevancy",
+                    "threshold": 0.5,
+                    "success": false,
+                    "score": 0.0,
+                    "reason": null,
+                    "strict_mode": false,
+                    "evaluation_model": "Azure OpenAI Model - cilabs-govgptuat-chat4o",
+                    "error": null,
+                    "evaluation_cost": null,
+                    "verbose_logs": "Verdicts:\n[]"
+                },
+                {
+                    "name": "Answer Relevancy",
+                    "threshold": 0.5,
+                    "success": false,
+                    "score": 0.3333333333333333,
+                    "reason": null,
+                    "strict_mode": false,
+                    "evaluation_model": "Azure OpenAI Model - cilabs-govgptuat-chat4o",
+                    "error": null,
+                    "evaluation_cost": null,
+                    "verbose_logs": "Statements:\n[\n    \"I'm sorry.\",\n    \"I can't provide information on hypothetical scenarios or expansions of Callaghan Innovation beyond the current scope of available data.\",\n    \"If you have questions about Callaghan Innovation's current services or support for New Zealand businesses, feel free to ask!\"\n] \n \nVerdicts:\n[\n    {\n        \"verdict\": \"no\",\n        \"reason\": \"The statement 'I'm sorry.' is irrelevant to the input about Callaghan Innovation's global expansion and mission evolution.\"\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"no\",\n        \"reason\": \"The statement about asking questions on Callaghan Innovation's current services is irrelevant to the hypothetical scenario of global expansion.\"\n    }\n]"
+                },
+                {
+                    "name": "Faithfulness",
+                    "threshold": 0.5,
+                    "success": true,
+                    "score": 1.0,
+                    "reason": null,
+                    "strict_mode": false,
+                    "evaluation_model": "Azure OpenAI Model - cilabs-govgptuat-chat4o",
+                    "error": null,
+                    "evaluation_cost": null,
+                    "verbose_logs": "Truths (limit=None):\n[] \n \nClaims:\n[\n    \"Callaghan Innovation provides current services or support for New Zealand businesses.\"\n] \n \nVerdicts:\n[\n    {\n        \"verdict\": \"idk\",\n        \"reason\": null\n    }\n]"
+                },
+                {
+                    "name": "Correctness (GEval)",
+                    "threshold": 0.5,
+                    "success": false,
+                    "score": 0.2,
+                    "reason": "The actual output does not address the hypothetical scenario of Callaghan Innovation's global expansion, failing to meet the criteria of exploring how its mission might evolve. It avoids the question entirely, thus not aligning with the expected output.",
+                    "strict_mode": false,
+                    "evaluation_model": "Azure OpenAI Model - cilabs-govgptuat-chat4o",
+                    "error": null,
+                    "evaluation_cost": null,
+                    "verbose_logs": "Criteria:\nDetermine whether the actual output is factually correct based on the expected output. \n \nEvaluation Steps:\n[\n    \"Compare the actual output with the expected output to identify any discrepancies.\",\n    \"Verify the factual accuracy of the actual output by cross-referencing with reliable sources.\",\n    \"Check if the actual output logically follows from the input and aligns with the expected output.\",\n    \"Ensure that the actual output meets all the criteria outlined in the expected output.\"\n]"
+                }
+            ],
+            "conversational": false,
+            "multimodal": false,
+            "input": "If Callaghan Innovation were to expand globally, how might its mission to foster bold, innovative entrepreneurs and world-bettering companies evolve?",
+            "actual_output": "I'm sorry, but I can't provide information on hypothetical scenarios or expansions of Callaghan Innovation beyond the current scope of available data. If you have questions about Callaghan Innovation's current services or support for New Zealand businesses, feel free to ask!",
+            "expected_output": "If Callaghan Innovation were to expand globally, its mission to foster bold, innovative entrepreneurs and world-bettering companies might evolve by adapting its strategies to diverse international markets. This could involve collaborating with global partners to support innovation across different cultural and economic contexts, enhancing its focus on diversity, equity, inclusion, and belonging on a global scale, and leveraging its expertise in areas like medicinal cannabis to address global challenges. Additionally, Callaghan Innovation might expand its support for indigenous businesses, like Pakihi M\u0101ori, to include indigenous entrepreneurs worldwide, thereby fostering a more inclusive and innovative global entrepreneurial ecosystem.",
+            "context": [
+                "Laboratory\n            \n           \n\n           \n            \n             In Focus: Hemp and medicinal cannabis\n            \n           \n\n          \n\n          \n           \n            Browse our products\n           \n           \n            \n             Grow Products and Services\n            \n           \n\n          \n\n         \n\n        \n\n       \n       \n       \n      \n\t\n       \n        About\n       \n       \n        \n         \n          \n          \n\n          \n           \n            \n             \n            \n\n            \n             \n              Learn more about Callaghan Innovation\u2019s vision, values, history and mission to foster bold, innovative entrepreneurs and world-bettering companies.\n             \n\n             \n              Read more\n             \n            \n\n           \n\n          \n\n         \n\n         \n          \n           \n            \n             About Us\n            \n           \n\n           \n            \n             Sir Paul Callaghan (1947 - 2012)\n            \n           \n\n           \n            \n             Sir Paul Callaghan 100 Report\n            \n           \n\n           \n            \n             Frontier Ventures\n            \n           \n\n           \n            \n             Supporting Pakihi M\u0101ori\n            \n           \n\n           \n            \n             Diversity, Equity, Inclusion, and Belonging\n            \n           \n\n           \n            \n             Our Partners\n            \n           \n\n           \n            \n             Our Providers"
+            ],
+            "retrieval_context": []
+        },
+        {
+            "name": "test_case_5",
+            "success": true,
+            "metrics_data": [
+                {
+                    "name": "Contextual Precision",
+                    "threshold": 0.5,
+                    "success": true,
+                    "score": 1.0,
+                    "reason": null,
+                    "strict_mode": false,
+                    "evaluation_model": "Azure OpenAI Model - cilabs-govgptuat-chat4o",
+                    "error": null,
+                    "evaluation_cost": null,
+                    "verbose_logs": "Verdicts:\n[\n    {\n        \"verdict\": \"yes\",\n        \"reason\": \"The context mentions 'world-class problem-solving expertise and R&D facilities at your disposal, helping you overcome technical challenges and take your innovations to the next level,' which aligns with leveraging R&D facilities to enhance innovation and productivity.\"\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": \"The context includes 'world-class problem-solving expertise and R&D facilities at your disposal, helping you overcome technical challenges and take your innovations to the next level,' which supports the idea of strategic partnerships for leveraging R&D facilities.\"\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": \"The context states 'world-class problem-solving expertise and R&D facilities at your disposal, helping you overcome technical challenges and take your innovations to the next level,' which is relevant to the expected output of leveraging R&D facilities for innovation and productivity.\"\n    }\n]"
+                },
+                {
+                    "name": "Contextual Recall",
+                    "threshold": 0.5,
+                    "success": true,
+                    "score": 1.0,
+                    "reason": null,
+                    "strict_mode": false,
+                    "evaluation_model": "Azure OpenAI Model - cilabs-govgptuat-chat4o",
+                    "error": null,
+                    "evaluation_cost": null,
+                    "verbose_logs": "Verdicts:\n[\n    {\n        \"verdict\": \"yes\",\n        \"reason\": \"The sentence 'We offer strategic partnerships that provide access to world-class problem-solving expertise and R&D facilities.' is supported by the 1st node: 'We put world-class problem-solving expertise and R&D facilities at your disposal...'.\"\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": \"The sentence 'These partnerships are designed to help you overcome technical challenges, enhance innovation, and boost productivity.' is supported by the 1st node: '...helping you overcome technical challenges and take your innovations to the next level.' and '...helping you spot opportunities to innovate and increase productivity...'.\"\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": \"The sentence 'By collaborating with us, you can leverage our resources to spot opportunities for innovation, set goals, and receive the necessary training for long-term success.' is supported by the 1st node: '...helping you spot opportunities to innovate and increase productivity, set goals and get the training you need for success.'.\"\n    }\n]"
+                },
+                {
+                    "name": "Contextual Relevancy",
+                    "threshold": 0.5,
+                    "success": true,
+                    "score": 0.6666666666666666,
+                    "reason": null,
+                    "strict_mode": false,
+                    "evaluation_model": "Azure OpenAI Model - cilabs-govgptuat-chat4o",
+                    "error": null,
+                    "evaluation_cost": null,
+                    "verbose_logs": "Verdicts:\n[\n    {\n        \"verdicts\": [\n            {\n                \"statement\": \"We have extensive connections across our country's innovation network and can help you find the right collaborators and resources to advance your ideas.\",\n                \"verdict\": \"yes\",\n                \"reason\": null\n            },\n            {\n                \"statement\": \"We empower you for growth and long-term success by funding specific innovation and R&D initiatives, including talent recruitment and product development.\",\n                \"verdict\": \"no\",\n                \"reason\": \"The statement focuses on funding innovation and R&D initiatives, talent recruitment, and product development, which does not directly relate to strategic partnerships for leveraging R&D facilities.\"\n            },\n            {\n                \"statement\": \"We put world-class problem-solving expertise and R&D facilities at your disposal, helping you overcome technical challenges and take your innovations to the next level.\",\n                \"verdict\": \"yes\",\n                \"reason\": null\n            },\n            {\n                \"statement\": \"We'll support your business growth by helping you spot opportunities to innovate and increase productivity, set goals and get the training you need for success.\",\n                \"verdict\": \"no\",\n                \"reason\": \"The statement is about supporting business growth through spotting opportunities, setting goals, and training, which does not directly relate to strategic partnerships for leveraging R&D facilities.\"\n            }\n        ]\n    },\n    {\n        \"verdicts\": [\n            {\n                \"statement\": \"We have extensive connections across our country's innovation network and can help you find the right collaborators and resources to advance your ideas.\",\n                \"verdict\": \"yes\",\n                \"reason\": null\n            },\n            {\n                \"statement\": \"We empower you for growth and long-term success by funding specific innovation and R&D initiatives, including talent recruitment and product development.\",\n                \"verdict\": \"no\",\n                \"reason\": \"The statement focuses on funding innovation and R&D initiatives, including talent recruitment and product development, which does not directly relate to leveraging R&D facilities for strategic partnerships.\"\n            },\n            {\n                \"statement\": \"We put world-class problem-solving expertise and R&D facilities at your disposal, helping you overcome technical challenges and take your innovations to the next level.\",\n                \"verdict\": \"yes\",\n                \"reason\": null\n            },\n            {\n                \"statement\": \"We'll support your business growth by helping you spot opportunities to innovate and increase productivity, set goals and get the training you need for success.\",\n                \"verdict\": \"no\",\n                \"reason\": \"The statement is about supporting business growth through spotting opportunities, setting goals, and training, which does not directly relate to leveraging R&D facilities for strategic partnerships.\"\n            }\n        ]\n    },\n    {\n        \"verdicts\": [\n            {\n                \"statement\": \"We have extensive connections across our country's innovation network and can help you find the right collaborators and resources to advance your ideas.\",\n                \"verdict\": \"yes\",\n                \"reason\": null\n            },\n            {\n                \"statement\": \"We empower you for growth and long-term success by funding specific innovation and R&D initiatives, including talent recruitment and product development.\",\n                \"verdict\": \"yes\",\n                \"reason\": null\n            },\n            {\n                \"statement\": \"We put world-class problem-solving expertise and R&D facilities at your disposal, helping you overcome technical challenges and take your innovations to the next level.\",\n                \"verdict\": \"yes\",\n                \"reason\": null\n            },\n            {\n                \"statement\": \"We'll support your business growth by helping you spot opportunities to innovate and increase productivity, set goals and get the training you need for success.\",\n                \"verdict\": \"yes\",\n                \"reason\": null\n            }\n        ]\n    }\n]"
+                },
+                {
+                    "name": "Answer Relevancy",
+                    "threshold": 0.5,
+                    "success": true,
+                    "score": 1.0,
+                    "reason": null,
+                    "strict_mode": false,
+                    "evaluation_model": "Azure OpenAI Model - cilabs-govgptuat-chat4o",
+                    "error": null,
+                    "evaluation_cost": null,
+                    "verbose_logs": "Statements:\n[\n    \"To explore strategic partnerships for leveraging R&D facilities to enhance innovation and productivity, you can consider the following approaches based on the available sources:\",\n    \"Utilise Innovation Networks.\",\n    \"Leverage extensive connections across New Zealand's innovation network to find the right collaborators and resources.\",\n    \"This can help advance your ideas and projects by connecting with experts and facilities that align with your goals.\",\n    \"Access World-Class R&D Facilities.\",\n    \"Take advantage of world-class problem-solving expertise and R&D facilities available through these networks.\",\n    \"These resources can help you overcome technical challenges and elevate your innovations to the next level.\",\n    \"Funding and Support for R&D Initiatives.\",\n    \"Seek funding and support for specific innovation and R&D initiatives.\",\n    \"This can include talent recruitment and product development, which are crucial for enhancing productivity and innovation.\",\n    \"Identify Opportunities for Innovation.\",\n    \"Work with partners to spot opportunities to innovate and increase productivity.\",\n    \"Setting clear goals and obtaining necessary training can further support your business growth and success.\",\n    \"These strategies can help you effectively leverage R&D facilities and partnerships to boost innovation and productivity.\",\n    \"Please note that this list is non-exhaustive, and further exploration of available resources and networks is recommended.\"\n] \n \nVerdicts:\n[\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"idk\",\n        \"reason\": null\n    }\n]"
+                },
+                {
+                    "name": "Faithfulness",
+                    "threshold": 0.5,
+                    "success": true,
+                    "score": 0.8333333333333334,
+                    "reason": null,
+                    "strict_mode": false,
+                    "evaluation_model": "Azure OpenAI Model - cilabs-govgptuat-chat4o",
+                    "error": null,
+                    "evaluation_cost": null,
+                    "verbose_logs": "Truths (limit=None):\n[\n    \"The organization has extensive connections across the country's innovation network.\",\n    \"The organization can help find the right collaborators and resources to advance ideas.\",\n    \"The organization funds specific innovation and R&D initiatives, including talent recruitment and product development.\",\n    \"The organization provides world-class problem-solving expertise and R&D facilities.\",\n    \"The organization helps overcome technical challenges and advance innovations.\",\n    \"The organization supports business growth by helping spot opportunities to innovate and increase productivity.\",\n    \"The organization helps set goals and provides training for success.\"\n] \n \nClaims:\n[\n    \"To explore strategic partnerships for leveraging R&D facilities to enhance innovation and productivity, you can consider utilising innovation networks, accessing world-class R&D facilities, seeking funding and support for R&D initiatives, and identifying opportunities for innovation.\",\n    \"Utilising innovation networks involves leveraging extensive connections across New Zealand's innovation network to find the right collaborators and resources, which can help advance ideas and projects by connecting with experts and facilities that align with your goals.\",\n    \"Accessing world-class R&D facilities involves taking advantage of problem-solving expertise and R&D facilities available through networks to overcome technical challenges and elevate innovations.\",\n    \"Seeking funding and support for R&D initiatives can include talent recruitment and product development, which are crucial for enhancing productivity and innovation.\",\n    \"Identifying opportunities for innovation involves working with partners to spot opportunities to innovate and increase productivity, setting clear goals, and obtaining necessary training to support business growth and success.\",\n    \"These strategies can help effectively leverage R&D facilities and partnerships to boost innovation and productivity.\"\n] \n \nVerdicts:\n[\n    {\n        \"verdict\": \"idk\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"no\",\n        \"reason\": \"The claim specifies leveraging connections across New Zealand's innovation network, but the retrieval context does not mention New Zealand specifically.\"\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"idk\",\n        \"reason\": null\n    }\n]"
+                },
+                {
+                    "name": "Correctness (GEval)",
+                    "threshold": 0.5,
+                    "success": true,
+                    "score": 0.9,
+                    "reason": "The actual output aligns well with the input by providing specific strategies for leveraging R&D facilities to enhance innovation and productivity. It includes utilizing innovation networks, accessing world-class facilities, seeking funding, and identifying opportunities, which are relevant and logical steps. The output is factually accurate and does not miss any critical information compared to the input.",
+                    "strict_mode": false,
+                    "evaluation_model": "Azure OpenAI Model - cilabs-govgptuat-chat4o",
+                    "error": null,
+                    "evaluation_cost": null,
+                    "verbose_logs": "Criteria:\nDetermine whether the actual output is factually correct based on the expected output. \n \nEvaluation Steps:\n[\n    \"Compare the actual output with the expected output to identify any discrepancies.\",\n    \"Verify the factual accuracy of the actual output by cross-referencing with reliable sources.\",\n    \"Assess whether the actual output logically follows from the input and aligns with the expected output.\",\n    \"Determine if any information is missing or incorrectly stated in the actual output compared to the expected output.\"\n]"
+                }
+            ],
+            "conversational": false,
+            "multimodal": false,
+            "input": "Explore strategic partnerships for leveraging R&D facilities to enhance innovation and productivity.",
+            "actual_output": "To explore strategic partnerships for leveraging R&D facilities to enhance innovation and productivity, you can consider the following approaches based on the available sources:\n\n1. **Utilise Innovation Networks**: Leverage extensive connections across New Zealand's innovation network to find the right collaborators and resources. This can help advance your ideas and projects by connecting with experts and facilities that align with your goals [ai-activator-to-support-rapid-adoption-of-transformative-ai-technologies.html].\n\n2. **Access World-Class R&D Facilities**: Take advantage of world-class problem-solving expertise and R&D facilities available through these networks. These resources can help you overcome technical challenges and elevate your innovations to the next level [ai-activator.html].\n\n3. **Funding and Support for R&D Initiatives**: Seek funding and support for specific innovation and R&D initiatives. This can include talent recruitment and product development, which are crucial for enhancing productivity and innovation [ai-e-learning-modules.html].\n\n4. **Identify Opportunities for Innovation**: Work with partners to spot opportunities to innovate and increase productivity. Setting clear goals and obtaining necessary training can further support your business growth and success [ai-activator-to-support-rapid-adoption-of-transformative-ai-technologies.html].\n\nThese strategies can help you effectively leverage R&D facilities and partnerships to boost innovation and productivity. Please note that this list is non-exhaustive, and further exploration of available resources and networks is recommended.",
+            "expected_output": "We offer strategic partnerships that provide access to world-class problem-solving expertise and R&D facilities. These partnerships are designed to help you overcome technical challenges, enhance innovation, and boost productivity. By collaborating with us, you can leverage our resources to spot opportunities for innovation, set goals, and receive the necessary training for long-term success.",
+            "context": [
+                "We empower you for growth and long-term success by funding specific innovation and R&D initiatives, including talent recruitment and product development.\n              \n\n              \n               Read more\n              \n             \n\n            \n\n            \n             \n              \n             \n\n             \n              \n               We put world-class problem-solving expertise and R&D facilities at your disposal, helping you overcome technical challenges and take your innovations to the next level.\n              \n\n              \n               Read more\n              \n             \n\n            \n\n            \n             \n              \n             \n\n             \n              \n               We'll support your business growth by helping you spot opportunities to innovate and increase productivity, set goals and get the training you need for success.\n              \n\n              \n               Read more\n              \n             \n\n            \n\n           \n\n          \n\n         \n\n         \n          \n           \n            Browse our product categories\n           \n           \n            \n             Products & Services\n            \n           \n\n           \n            \n             Upskill\n            \n           \n\n           \n            \n             Connect\n            \n           \n\n           \n            \n             Fund\n            \n           \n\n           \n            \n             Solve"
+            ],
+            "retrieval_context": [
+                "ai-activator-to-support-rapid-adoption-of-transformative-ai-technologies.html: We have extensive connections across our country's innovation network and can help you find the right collaborators and resources to advance your ideas.                                       Read more                                                                                                                                                                                                   We empower you for growth and long-term success by funding specific innovation and R&D initiatives, including talent recruitment and product development.                                       Read more                                                                                                                                                                                                   We put world-class problem-solving expertise and R&D facilities at your disposal, helping you overcome technical challenges and take your innovations to the next level.                                       Read more                                                                                                                                                                                                   We'll support your business growth by helping you spot opportunities to innovate and increase productivity, set goals and get the training you need for success.                                       Read more",
+                "ai-activator.html: We have extensive connections across our country's innovation network and can help you find the right collaborators and resources to advance your ideas.                                       Read more                                                                                                                                                                                                   We empower you for growth and long-term success by funding specific innovation and R&D initiatives, including talent recruitment and product development.                                       Read more                                                                                                                                                                                                   We put world-class problem-solving expertise and R&D facilities at your disposal, helping you overcome technical challenges and take your innovations to the next level.                                       Read more                                                                                                                                                                                                   We'll support your business growth by helping you spot opportunities to innovate and increase productivity, set goals and get the training you need for success.                                       Read more",
+                "ai-e-learning-modules.html: We have extensive connections across our country's innovation network and can help you find the right collaborators and resources to advance your ideas.                                       Read more                                                                                                                                                                                                   We empower you for growth and long-term success by funding specific innovation and R&D initiatives, including talent recruitment and product development.                                       Read more                                                                                                                                                                                                   We put world-class problem-solving expertise and R&D facilities at your disposal, helping you overcome technical challenges and take your innovations to the next level.                                       Read more                                                                                                                                                                                                   We'll support your business growth by helping you spot opportunities to innovate and increase productivity, set goals and get the training you need for success.                                       Read more"
+            ]
+        },
+        {
+            "name": "test_case_6",
+            "success": false,
+            "metrics_data": [
+                {
+                    "name": "Contextual Precision",
+                    "threshold": 0.5,
+                    "success": true,
+                    "score": 1.0,
+                    "reason": null,
+                    "strict_mode": false,
+                    "evaluation_model": "Azure OpenAI Model - cilabs-govgptuat-chat4o",
+                    "error": null,
+                    "evaluation_cost": null,
+                    "verbose_logs": "Verdicts:\n[\n    {\n        \"verdict\": \"yes\",\n        \"reason\": \"The context discusses the importance of having workplace policies to support employees affected by family violence, which aligns with the expected output's emphasis on fostering a supportive environment.\"\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": \"The context explains family violence and the rights of employees, which is relevant to understanding the impact of expanded leave policies on employee support systems.\"\n    },\n    {\n        \"verdict\": \"no\",\n        \"reason\": \"The context primarily discusses jury service leave and does not provide relevant information about family violence leave or its impact on workplace dynamics.\"\n    }\n]"
+                },
+                {
+                    "name": "Contextual Recall",
+                    "threshold": 0.5,
+                    "success": false,
+                    "score": 0.4,
+                    "reason": null,
+                    "strict_mode": false,
+                    "evaluation_model": "Azure OpenAI Model - cilabs-govgptuat-chat4o",
+                    "error": null,
+                    "evaluation_cost": null,
+                    "verbose_logs": "Verdicts:\n[\n    {\n        \"verdict\": \"yes\",\n        \"reason\": \"The 1st node mentions 'update existing leave and holidays policies' and 'make changes at work to ensure staff affected by family violence are not treated adversely,' which aligns with expanding policies to cover more scenarios.\"\n    },\n    {\n        \"verdict\": \"no\",\n        \"reason\": \"The retrieval context does not mention increasing awareness and sensitivity towards family violence issues within the workplace.\"\n    },\n    {\n        \"verdict\": \"no\",\n        \"reason\": \"The retrieval context does not discuss employees feeling more secure and valued due to support during difficult times.\"\n    },\n    {\n        \"verdict\": \"no\",\n        \"reason\": \"The retrieval context does not mention improved morale and productivity as a result of reduced stress from balancing personal crises with work.\"\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": \"The 1st node suggests 'update existing leave and holidays policies' and 'make changes at work,' implying HR departments might need to enhance support systems.\"\n    }\n]"
+                },
+                {
+                    "name": "Contextual Relevancy",
+                    "threshold": 0.5,
+                    "success": true,
+                    "score": 0.5555555555555556,
+                    "reason": null,
+                    "strict_mode": false,
+                    "evaluation_model": "Azure OpenAI Model - cilabs-govgptuat-chat4o",
+                    "error": null,
+                    "evaluation_cost": null,
+                    "verbose_logs": "Verdicts:\n[\n    {\n        \"verdicts\": [\n            {\n                \"statement\": \"The ability to meet customer demand would be negatively impacted.\",\n                \"verdict\": \"no\",\n                \"reason\": \"The statement 'the ability to meet customer demand would be negatively impacted' does not relate to workplace dynamics or employee support systems in the context of expanded family violence leave policies.\"\n            },\n            {\n                \"statement\": \"As an employer, you should have workplace policies in place that provide support for employees affected by family violence.\",\n                \"verdict\": \"yes\",\n                \"reason\": null\n            },\n            {\n                \"statement\": \"For example, you could create a family violence policy that sets out how you will support employees who are affected by family violence.\",\n                \"verdict\": \"yes\",\n                \"reason\": null\n            },\n            {\n                \"statement\": \"Update existing leave and holidays policies, as well as flexible work policies.\",\n                \"verdict\": \"yes\",\n                \"reason\": null\n            },\n            {\n                \"statement\": \"Make changes at work to ensure staff affected by family violence are not treated adversely.\",\n                \"verdict\": \"yes\",\n                \"reason\": null\n            },\n            {\n                \"statement\": \"Having clear policies helps build good working relationships between workers and employers.\",\n                \"verdict\": \"yes\",\n                \"reason\": null\n            },\n            {\n                \"statement\": \"They make it simpler for both you and your employees to handle the effects of family violence.\",\n                \"verdict\": \"yes\",\n                \"reason\": null\n            },\n            {\n                \"statement\": \"Create a family violence policy using Workplace Policy Builder.\",\n                \"verdict\": \"no\",\n                \"reason\": \"The statement 'Create a family violence policy using Workplace Policy Builder' is more about the tool for creating policies rather than the impact of expanded family violence leave policies on workplace dynamics and employee support systems.\"\n            },\n            {\n                \"statement\": \"Workplace Policy Builder - Business.govt.nz (external link)\",\n                \"verdict\": \"no\",\n                \"reason\": \"The statement 'Workplace Policy Builder - Business.govt.nz (external link)' is a reference to an external tool and not relevant to the impact of expanded family violence leave policies on workplace dynamics and employee support systems.\"\n            },\n            {\n                \"statement\": \"Workplace policies and procedures Published: 11 Mar 2024\",\n                \"verdict\": \"no\",\n                \"reason\": \"The statement 'Workplace policies and procedures Published: 11 Mar 2024' is about the publication date and not relevant to the impact of expanded family violence leave policies on workplace dynamics and employee support systems.\"\n            }\n        ]\n    },\n    {\n        \"verdicts\": [\n            {\n                \"statement\": \"Family violence, also known as domestic violence, means all forms of violence in family and intimate relationships. It can be physical, sexual or psychological abuse.\",\n                \"verdict\": \"no\",\n                \"reason\": \"The statement defines family violence but does not relate to the impact of expanding family violence leave policies on workplace dynamics and employee support systems.\"\n            },\n            {\n                \"statement\": \"If you are affected by family violence you also have the right to ask for short-term flexible working arrangements for up to 2 months.\",\n                \"verdict\": \"yes\",\n                \"reason\": null\n            },\n            {\n                \"statement\": \"You have the right to not be treated adversely (badly) in the workplace because you might have experienced family violence.\",\n                \"verdict\": \"yes\",\n                \"reason\": null\n            },\n            {\n                \"statement\": \"You still have these rights if you experienced family violence before you began working for your current employer or before the law changed on 1 April 2019.\",\n                \"verdict\": \"no\",\n                \"reason\": \"The statement discusses the retention of rights regardless of when family violence was experienced, which does not directly address the impact of expanding family violence leave policies on workplace dynamics and employee support systems.\"\n            }\n        ]\n    },\n    {\n        \"verdicts\": [\n            {\n                \"statement\": \"Managing family violence leave\",\n                \"verdict\": \"yes\",\n                \"reason\": null\n            },\n            {\n                \"statement\": \"Taking family violence leave\",\n                \"verdict\": \"yes\",\n                \"reason\": null\n            },\n            {\n                \"statement\": \"Jury service leave\",\n                \"verdict\": \"no\",\n                \"reason\": \"The statement 'Jury service leave' is unrelated to family violence leave policies.\"\n            },\n            {\n                \"statement\": \"Employment Relations Education leave\",\n                \"verdict\": \"no\",\n                \"reason\": \"The statement 'Employment Relations Education leave' does not pertain to family violence leave policies.\"\n            }\n        ]\n    }\n]"
+                },
+                {
+                    "name": "Answer Relevancy",
+                    "threshold": 0.5,
+                    "success": true,
+                    "score": 0.9230769230769231,
+                    "reason": null,
+                    "strict_mode": false,
+                    "evaluation_model": "Azure OpenAI Model - cilabs-govgptuat-chat4o",
+                    "error": null,
+                    "evaluation_cost": null,
+                    "verbose_logs": "Statements:\n[\n    \"If family violence leave policies were expanded to cover more scenarios, it could have several impacts on workplace dynamics and employee support systems:\",\n    \"Increased Support for Employees.\",\n    \"Expanding the scenarios covered by family violence leave would likely enhance the support available to employees affected by family violence.\",\n    \"This could include more comprehensive leave options and flexible working arrangements, which are crucial for those dealing with such situations.\",\n    \"Workplace Policy Adjustments.\",\n    \"Employers might need to update their existing workplace policies to accommodate the expanded leave scenarios.\",\n    \"This could involve revising leave and holidays policies, as well as flexible work policies, to ensure they align with the new requirements.\",\n    \"Impact on Customer Demand.\",\n    \"There might be a negative impact on the ability to meet customer demand if more employees take leave under the expanded policies.\",\n    \"Employers would need to plan for potential disruptions and find ways to manage workloads effectively.\",\n    \"Improved Workplace Relationships.\",\n    \"Having clear and supportive policies in place can help build good working relationships between employers and employees.\",\n    \"It simplifies handling the effects of family violence and ensures that employees are not treated adversely due to their circumstances.\",\n    \"These points are non-exhaustive and would depend on the specific changes made to the policies.\"\n] \n \nVerdicts:\n[\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"no\",\n        \"reason\": \"The statement 'Impact on Customer Demand.' is irrelevant as it shifts focus from workplace dynamics and employee support systems to customer demand, which is not directly related to the input question.\"\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    }\n]"
+                },
+                {
+                    "name": "Faithfulness",
+                    "threshold": 0.5,
+                    "success": true,
+                    "score": 1.0,
+                    "reason": null,
+                    "strict_mode": false,
+                    "evaluation_model": "Azure OpenAI Model - cilabs-govgptuat-chat4o",
+                    "error": null,
+                    "evaluation_cost": null,
+                    "verbose_logs": "Truths (limit=None):\n[\n    \"Employers should have workplace policies to support employees affected by family violence.\",\n    \"Family violence can be physical, sexual, or psychological abuse.\",\n    \"Employees affected by family violence have the right to ask for short-term flexible working arrangements for up to 2 months.\",\n    \"Employees affected by family violence have the right not to be treated adversely in the workplace.\",\n    \"These rights apply even if the family violence was experienced before starting with the current employer or before the law changed on 1 April 2019.\",\n    \"Having clear workplace policies helps build good working relationships between workers and employers.\",\n    \"Employers can create a family violence policy using the Workplace Policy Builder on Business.govt.nz.\",\n    \"Family violence is also known as domestic violence.\",\n    \"Family violence includes all forms of violence in family and intimate relationships.\"\n] \n \nClaims:\n[\n    \"Expanding family violence leave policies to cover more scenarios could enhance support for employees affected by family violence, including more comprehensive leave options and flexible working arrangements.\",\n    \"Employers might need to update existing workplace policies to accommodate expanded leave scenarios, involving revisions to leave, holidays, and flexible work policies.\",\n    \"There might be a negative impact on the ability to meet customer demand if more employees take leave under expanded policies, requiring employers to plan for potential disruptions.\",\n    \"Clear and supportive policies can improve workplace relationships by simplifying the handling of family violence effects and ensuring employees are not treated adversely.\"\n] \n \nVerdicts:\n[\n    {\n        \"verdict\": \"idk\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"idk\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"idk\",\n        \"reason\": null\n    },\n    {\n        \"verdict\": \"yes\",\n        \"reason\": null\n    }\n]"
+                },
+                {
+                    "name": "Correctness (GEval)",
+                    "threshold": 0.5,
+                    "success": true,
+                    "score": 0.8,
+                    "reason": "The actual output aligns well with the input question by discussing potential impacts on workplace dynamics and employee support systems if family violence leave policies are expanded. It covers increased support, policy adjustments, potential impacts on customer demand, and improved workplace relationships, which are logical and relevant points. However, the output lacks specific factual references or citations to verify accuracy, and the mention of sources like '[taking-family-violence-leave.html]' is not verifiable. Overall, the output is comprehensive but could improve in factual accuracy verification.",
+                    "strict_mode": false,
+                    "evaluation_model": "Azure OpenAI Model - cilabs-govgptuat-chat4o",
+                    "error": null,
+                    "evaluation_cost": null,
+                    "verbose_logs": "Criteria:\nDetermine whether the actual output is factually correct based on the expected output. \n \nEvaluation Steps:\n[\n    \"Compare the actual output with the expected output to identify any discrepancies.\",\n    \"Verify the factual accuracy of the actual output by cross-referencing with reliable sources.\",\n    \"Assess whether the actual output logically follows from the input and aligns with the expected output.\",\n    \"Determine if any information is missing or incorrectly stated in the actual output compared to the expected output.\"\n]"
+                }
+            ],
+            "conversational": false,
+            "multimodal": false,
+            "input": "If family violence leave policies were suddenly expanded to cover more scenarios, how might this affect workplace dynamics and employee support systems?",
+            "actual_output": "If family violence leave policies were expanded to cover more scenarios, it could have several impacts on workplace dynamics and employee support systems:\n\n1. **Increased Support for Employees**: Expanding the scenarios covered by family violence leave would likely enhance the support available to employees affected by family violence. This could include more comprehensive leave options and flexible working arrangements, which are crucial for those dealing with such situations [taking-family-violence-leave.html].\n\n2. **Workplace Policy Adjustments**: Employers might need to update their existing workplace policies to accommodate the expanded leave scenarios. This could involve revising leave and holidays policies, as well as flexible work policies, to ensure they align with the new requirements [managing-family-violence-leave.html].\n\n3. **Impact on Customer Demand**: There might be a negative impact on the ability to meet customer demand if more employees take leave under the expanded policies. Employers would need to plan for potential disruptions and find ways to manage workloads effectively [managing-family-violence-leave.html].\n\n4. **Improved Workplace Relationships**: Having clear and supportive policies in place can help build good working relationships between employers and employees. It simplifies handling the effects of family violence and ensures that employees are not treated adversely due to their circumstances [managing-family-violence-leave.html].\n\nThese points are non-exhaustive and would depend on the specific changes made to the policies.",
+            "expected_output": "Expanding family violence leave policies to cover more scenarios could significantly impact workplace dynamics and employee support systems. It would likely increase awareness and sensitivity towards family violence issues within the workplace, fostering a more supportive and understanding environment. Employees might feel more secure and valued, knowing they have the necessary support during difficult times. This could lead to improved morale and productivity as employees are less stressed about balancing personal crises with work responsibilities. Additionally, HR departments might need to enhance their support systems and training to effectively manage the increased scope of leave requests and ensure that all employees are treated fairly and with empathy.",
+            "context": [
+                "Managing family violence leave\n                    \n                   \n\t\n                    \n                     Taking family violence leave\n                    \n                   \n\n\n                 \n\n                \n\n                \n                 \t\n                   \n                    Managing family violence leave\n                   \n                  \n\t\n                   \n                    Taking family violence leave\n                   \n                  \n\n\n                \n\n               \n              \n\t\n               \n                \n                 \n                  \n                   \n                    \n                    \n                   \n                   \n                    Jury service leave\n                   \n                  \n                 \n                 \n                  \n                   \n                   \n                  \n                  \n                   Jury service leave\n                  \n                 \n                \n\n               \n\n              \n\t\n               \n                \n                 \n                  \n                   \n                    \n                    \n                   \n                   \n                    Employment Relations Education leave"
+            ],
+            "retrieval_context": [
+                "managing-family-violence-leave.html: the ability to meet customer demand would be negatively impacted.                                                                                                          Developing workplace policies                                   As an employer, you should have workplace policies in place that provide support for employees affected by family violence.                                   For example, you could:                       \t             create a family violence policy that sets out how you will support employees who are affected by family violence             \t             update existing leave and holidays policies, as well as flexible work policies             \t             make changes at work to ensure staff affected by family violence are not treated adversely.                                     Having clear policies helps build good working relationships between workers and employers. They make it simpler for both you and your employees to handle the effects of family violence.                                   Create a family violence policy using Workplace Policy Builder.                                                Workplace Policy Builder - Business.govt.nz                           (external link)                                                                         Workplace policies and procedures                                                                       \t                       Published:                                  11 Mar 2024",
+                "taking-family-violence-leave.html: place.                                                                        Family violence leave guide                                                            Employee privacy                                                                                                                                                      Note                                                       Family violence, also known as domestic violence, means all forms of violence in family and intimate relationships. It can be physical, sexual or psychological abuse.                                                                                           Other rights employees have                                   If you are affected by family violence you also have the right to:                       \t             ask for short-term flexible working arrangements for up to 2 months             \t             not be treated adversely (badly) in the workplace because you might have experienced family violence.                                     You still have these rights if you experienced family violence before you began working for your current employer or before the law changed on 1 April 2019.                                                Responding to a flexible working request                                                                                                        Taking family violence leave",
+                "if-youre-self-employed.html: Managing family violence leave                                          \t                                           Taking family violence leave                                                                                                                   \t                                         Managing family violence leave                                        \t                                         Taking family violence leave                                                                                           \t                                                                                                                                                                                                 Jury service leave                                                                                                                                                                                                Jury service leave                                                                                        \t                                                                                                                                                                                                 Employment Relations Education leave"
+            ]
+        }
+    ],
+    "confident_link": null
+}
