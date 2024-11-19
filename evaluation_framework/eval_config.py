@@ -6,10 +6,11 @@ class EvalConfig(BaseModel):
     """Evaluation configuration"""
     max_concurrent: int = Field(default=1, description="Maximum concurrent evaluations")
     throttle_value: int = Field(default=30, description="API throttling value")
+    # Paths
     paths: Dict[str, Path] = Field(
         default={
             "test_cases": Path("eval_data/test_cases.json"),
-            "results": Path("eval_data/results.json"),
+            "eval_results": Path("eval_data/results.json"),
             "custom_metrics": Path("eval_data/custom_metrics.json"),
             "synthetic_data": Path("synthetic_data")
         }
@@ -22,24 +23,43 @@ class EvalConfig(BaseModel):
             "max_contexts": 1
         }
     )
-    system_rag_config: Dict[str, Any] = Field(
+    eval_pipeline: Dict[str, Any] = Field(
         default={
-            "top_k": 1,
+            "generate_synthetic_data": True,
+            "use_test_cases": True
         }
     )
-    metrics_config: Dict[str, float] = Field(
+    synthetic_data: Dict[str, Any] = Field(
         default={
-            "contextual_precision_threshold": 0.5,
-            "contextual_recall_threshold": 0.5,
-            "contextual_relevancy_threshold": 0.5,
-            "answer_relevancy_threshold": 0.5,
-            "faithfulness_threshold": 0.5
+            "goldens_per_context": 1,
+            "num_retrieved_contexts": 3,
+        }
+    )
+    # Added synthesizer configuration
+    synthesizer_config: Dict[str, Any] = Field(
+        default={
+            "max_contexts": 2,
+            "chunk_size": 150,
+            "chunk_overlap": 50,
+            "save_format": "json",
+            "synt_quality": 0.5,
+            "max_quality_retries": 3,
+            "context_quality_threshold": 0.5,
+            "context_similarity_threshold": 0.5,
+            "max_construction_retries": 3
+        }
+    )
+
+    deepeval_config: Dict[str, Any] = Field(
+        default={
+            "write_cache": False,   
+            "DEEPEVAL_TELEMETRY_OPT_OUT": "YES"
         }
     )
     
     @classmethod
     def from_file(cls, config_path: Path) -> "EvalConfig":
         """Load config from file"""
-        if not config_path.exists():
+        if not config_path or not config_path.exists():
             return cls()
         return cls.model_validate_json(config_path.read_text())

@@ -9,10 +9,10 @@ import asyncio
 import instructor
 from typing import Optional, Type, List, Tuple
 from pydantic import BaseModel
+from tenacity import retry, stop_after_attempt, wait_exponential
 
 from deepeval.models.base_model import DeepEvalBaseLLM
 from deepeval.models import DeepEvalBaseEmbeddingModel
-from openai import AzureOpenAI as AzureOpenAIClient
 from openai import AsyncAzureOpenAI as AsyncAzureOpenAIClient
 
 from core.authentication import AuthenticationHelper
@@ -29,7 +29,7 @@ class AzureOpenAI(DeepEvalBaseLLM):
         api_key: Optional[str] = None,
         azure_endpoint: Optional[str] = None,
         api_version: str = "2024-02-15-preview",
-        max_concurrent: int = 1,
+        max_concurrent: int = 2,
     ):
         self.model_name = deployment_name or model_name
         self.temperature = temperature
@@ -51,6 +51,8 @@ class AzureOpenAI(DeepEvalBaseLLM):
     def load_model(self):
         return self.instructor_client
 
+    @retry(stop=stop_after_attempt(3),
+           wait=wait_exponential(multiplier=1, min=4, max=10))
     def generate(self, prompt: str,
                  schema: Optional[Type[BaseModel]]=None) -> BaseModel:
         response = self.instructor_client.chat.completions.create(
@@ -61,6 +63,8 @@ class AzureOpenAI(DeepEvalBaseLLM):
         )
         return response
     
+    @retry(stop=stop_after_attempt(3),
+           wait=wait_exponential(multiplier=1, min=4, max=10))
     async def a_generate(self, prompt: str,
                          schema: Optional[Type[BaseModel]]=None) -> BaseModel:
         async with self.semaphore:
@@ -85,7 +89,7 @@ class AzureOpenAIEmbeddingModel(DeepEvalBaseEmbeddingModel):
         api_key: Optional[str] = None,
         api_version: Optional[str] = None,
         azure_endpoint: Optional[str] = None,
-        max_concurrent: int = 1,
+        max_concurrent: int = 2,
     ):
         self.model_name = deployment_name or model_name
         self.semaphore = asyncio.Semaphore(max_concurrent)
@@ -105,6 +109,8 @@ class AzureOpenAIEmbeddingModel(DeepEvalBaseEmbeddingModel):
     def load_model(self):
         return self.client
 
+    @retry(stop=stop_after_attempt(3),
+           wait=wait_exponential(multiplier=1, min=4, max=10))
     def embed_text(self, text: str) -> List[float]:
         embed = self.client.embeddings.create(
             input=[text],
@@ -112,6 +118,8 @@ class AzureOpenAIEmbeddingModel(DeepEvalBaseEmbeddingModel):
         )
         return embed.data[0].embedding
 
+    @retry(stop=stop_after_attempt(3),
+           wait=wait_exponential(multiplier=1, min=4, max=10))
     def embed_texts(self, texts: List[str]) -> List[List[float]]:
         embed = self.client.embeddings.create(
             input=texts,
@@ -119,6 +127,8 @@ class AzureOpenAIEmbeddingModel(DeepEvalBaseEmbeddingModel):
         )
         return [e.embedding for e in embed.data]
 
+    @retry(stop=stop_after_attempt(3),
+           wait=wait_exponential(multiplier=1, min=4, max=10))
     async def a_embed_text(self, text: str) -> List[float]:
         embed = await self.client.embeddings.create(
             input=[text],
@@ -126,6 +136,8 @@ class AzureOpenAIEmbeddingModel(DeepEvalBaseEmbeddingModel):
         )
         return embed.data[0].embedding
 
+    @retry(stop=stop_after_attempt(3),
+           wait=wait_exponential(multiplier=1, min=4, max=10))
     async def a_embed_texts(self, texts: List[str]) -> List[List[float]]:
         async with self.semaphore:
             embed = await self.client.embeddings.create(

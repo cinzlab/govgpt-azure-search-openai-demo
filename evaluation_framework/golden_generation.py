@@ -18,6 +18,7 @@ from deepeval.synthesizer.config import (
 )
 
 from models import ConfigLoader, ModelFactory
+from evaluation_framework.eval_config import EvalConfig
 
 SaveFormat = Literal['json', 'csv']
 load_dotenv()
@@ -25,16 +26,33 @@ load_dotenv()
 @dataclass
 class SynthesizerConfig:
     """Configuration for synthetic data generation."""
-    max_contexts: int = 2
-    chunk_size: int = 150
-    chunk_overlap: int = 50
-    save_format: SaveFormat = 'json'
-    save_path: Path = Path("./synthetic_data")
-    synt_quality: float = 0.5
-    max_quality_retries: int = 3
-    context_quality_threshold: float = 0.5
-    context_similarity_threshold: float = 0.5
-    max_construction_retries: int = 3
+    max_contexts: int
+    chunk_size: int
+    chunk_overlap: int
+    save_format: SaveFormat
+    save_path: Path
+    synt_quality: float
+    max_quality_retries: int
+    context_quality_threshold: float
+    context_similarity_threshold: float
+    max_construction_retries: int
+
+    @classmethod
+    def from_eval_config(cls, eval_config: EvalConfig) -> 'SynthesizerConfig':
+        """Create SynthesizerConfig from EvalConfig"""
+        config = eval_config.synthesizer_config
+        return cls(
+            max_contexts=config["max_contexts"],
+            chunk_size=config["chunk_size"],
+            chunk_overlap=config["chunk_overlap"],
+            save_format=config["save_format"],
+            save_path=eval_config.paths["synthetic_data"],
+            synt_quality=config["synt_quality"],
+            max_quality_retries=config["max_quality_retries"],
+            context_quality_threshold=config["context_quality_threshold"],
+            context_similarity_threshold=config["context_similarity_threshold"],
+            max_construction_retries=config["max_construction_retries"]
+        )
 
 class SyntheticDataGenerator:
     """Main class for generating synthetic training data."""
@@ -111,32 +129,20 @@ class SyntheticDataGenerator:
 
 async def synthetaze_data(
     documents: List[str],
-    max_contexts: int = 3,
-    chunk_size: int = 150,
-    chunk_overlap: int = 50,
-    save_format: SaveFormat = 'json',
-    save_path: Path = Path("./synthetic_data"),
+    eval_config: EvalConfig,
     app_config: Optional[Quart] = None,
     gen_from_docs: bool = True
 ) -> None:
     """
     Generate synthetic data from provided documents or contexts.
-    documents (List[str]): List of document paths or already created contexts
-    max_contexts (int): Maximum number of contexts per document
-    chunk_size (int): Size of each context chunk
-    chunk_overlap (int): Overlap between context chunks
-    save_format (SaveFormat): Format to save the generated data
-    save_path (Path): Path to save the generated data
-    gen_from_docs (bool): Whether to generate data from documents or contexts
+    
+    Args:
+        documents: List of document paths or already created contexts
+        eval_config: Evaluation configuration containing synthesizer settings
+        app_config: Optional Quart app configuration
+        gen_from_docs: Whether to generate data from documents or contexts
     """
-    custom_config = SynthesizerConfig(
-        max_contexts=max_contexts,
-        chunk_size=chunk_size,
-        chunk_overlap=chunk_overlap,
-        save_format=save_format,
-        save_path=save_path
-    )
+    custom_config = SynthesizerConfig.from_eval_config(eval_config)
     generator = SyntheticDataGenerator(custom_config, app_config)
-    goldens = generator.generate(documents,
-                                 gen_from_docs=gen_from_docs)
+    goldens = generator.generate(documents, gen_from_docs=gen_from_docs)
     return goldens

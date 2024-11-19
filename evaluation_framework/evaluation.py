@@ -5,7 +5,6 @@ recall, relevancy, faithfulness, and legal risk assessment.
 """
 
 import json
-from dataclasses import dataclass
 from typing import List, Dict, Optional
 from quart import Quart
 from dotenv import load_dotenv
@@ -37,7 +36,7 @@ class RAGEvaluator:
         Initialize the Evaluator with the provided configuration and evaluation data.
         """
         self.config = config
-        self.results_path = config.paths["results"]
+        self.results_path = config.paths["eval_results"]
         self.custom_metrics = config.paths["custom_metrics"]
         self.max_concurrent = config.max_concurrent
         self.throttle_value = config.throttle_value
@@ -48,13 +47,24 @@ class RAGEvaluator:
         else:
             self.llm_model = create_llm_model()
 
-    async def process_goldens(self, goldens: List[Dict], rag_system: RAG) -> List[Dict]:
+    async def prepare_eval_data(self, eval_data: List[Dict], rag_system: RAG) -> List[Dict]:
         """Process goldens and return evaluation data"""
         # Process all questions in one batch
-        goldens = [g.model_dump() for g in goldens]
+        questions = [eval_case["input"] for eval_case in eval_data]
+        answers = await rag_system.ask_questions(questions)
+        # Update eval_data_list with results
+        for i, eval_case in enumerate(eval_data):
+            _answer = answers["results"][i]["message"]["content"]
+            _context = answers["results"][i]["context"]['data_points']["text"]
+            eval_case["actual_output"] = _answer
+            eval_case["retrieval_context"] = _context
 
+        return eval_data
+    
+    def prepare_goldens(self, goldens: List[Dict]) -> List[Dict]:
+        """Prepare goldens for evaluation"""
+        goldens = [g.model_dump() for g in goldens]
         eval_data_list = []
-        questions = []
         for golden in goldens:
             eval_data = {
                 "input": golden["input"],
@@ -62,52 +72,44 @@ class RAGEvaluator:
                 "context": golden["context"]
             }
             eval_data_list.append(eval_data)
-            questions.append(eval_data["input"])
-
-        answers = await rag_system.ask_questions(questions)
-
-        # Update eval_data_list with results
-        for i, eval_data in enumerate(eval_data_list):
-            _answer = answers["results"][i]["message"]["content"]
-            _context = answers["results"][i]["context"]['data_points']["text"]
-            eval_data["actual_output"] = _answer
-            eval_data["retrieval_context"] = _context
-
         return eval_data_list
     
-    def read_test_cases(self) -> List[LLMTestCase]:
-        """Read test cases from the provided file"""
-        if self.config.paths["test_cases"]:
-            return read_test_cases(self.config.paths["test_cases"])
-        return []
-    
-    async def _evaluate(self, eval_data: Optional[List[Dict]] = None) -> None:
+    async def _evaluate(self, eval_data: List[Dict]) -> None:
         """
         Run evaluation on the provided test cases.
         eval_data: List of evaluation data
         """
-        test_cases = self.read_test_cases()
-
-        if not eval_data and not test_cases:
-            raise ValueError("Please provide test cases or a path to a test cases file.")
-
         custom_metrics = read_json(self.custom_metrics)
         metrics = create_metrics(self.llm_model, custom_metrics)
 
-        # Read test cases from the provided eval_data list
-        if eval_data:
-            test_cases_data = [LLMTestCase(**test_case) for test_case in eval_data]
-            test_cases += test_cases_data
+        test_cases = [LLMTestCase(**test_case) for test_case in eval_data]
+
         # Run evaluation
         results = evaluate(
             test_cases=test_cases,
             metrics=metrics,
             throttle_value=self.throttle_value,
-            max_concurrent=self.max_concurrent
+            max_concurrent=self.max_concurrent,
+            write_cache=False
         )
         # Save results
         if self.results_path:
             save_results(results, self.results_path)
+
+        return results
+    
+    def load_test_cases(self, test_file: str) -> List[Dict]:
+        """Load test cases from a JSON file"""
+        test_cases = read_json(test_file)["test_cases"]
+        return test_cases
+    
+    def prepare_tests(self, test_cases: List[Dict]) -> None:
+        """Run tests on the provided test cases"""
+        custom_metrics = read_json(self.custom_metrics)
+        metrics = create_metrics(self.llm_model, custom_metrics)
+        
+        test_cases = [LLMTestCase(**test_case) for test_case in test_cases]
+        return test_cases, metrics
 
 
 def create_llm_model() -> DeepEvalBaseLLM:
@@ -122,25 +124,37 @@ def create_model_from_app_config(current_app):
 def create_metrics(eval_model: DeepEvalBaseLLM,
                    custom_metrics: Optional[Dict]=[]) -> List:
     """Create a list of evaluation metrics."""
-    # Create custom metrics
-    metrics = []
-    for metric in custom_metrics["metrics"]:
-        metric_object = GEval(
-            model=eval_model,
-            name=metric["name"],
-            criteria=metric["description"],
-            evaluation_params=[LLMTestCaseParams.INPUT,
-                               LLMTestCaseParams.ACTUAL_OUTPUT]
-        )
-        metrics.append(metric_object)
-
-    return [
+    default_metrics = [
         ContextualPrecisionMetric(model=eval_model, include_reason=False),
         ContextualRecallMetric(model=eval_model, include_reason=False),
         ContextualRelevancyMetric(model=eval_model, include_reason=False),
         AnswerRelevancyMetric(model=eval_model, include_reason=False),
         FaithfulnessMetric(model=eval_model, include_reason=False),
-    ] + metrics
+    ]
+    if not custom_metrics:
+        return default_metrics
+    
+    if "metrics" not in custom_metrics:
+        raise ValueError("custom_metrics must contain 'metrics' key")
+        
+    if not isinstance(custom_metrics["metrics"], list):
+        raise ValueError("custom_metrics['metrics'] must be a list")
+
+    # Create custom metrics
+    metrics = []
+    for metric in custom_metrics["metrics"]:
+        try:
+            metric_object = GEval(
+                model=eval_model,
+                name=metric["name"],
+                criteria=metric["description"],
+                evaluation_params=[LLMTestCaseParams.INPUT,
+                                   LLMTestCaseParams.ACTUAL_OUTPUT]
+            )
+            metrics.append(metric_object)
+        except Exception as e:
+            raise ValueError(f"Error creating metric {metric['name']}: {str(e)}") from e
+    return default_metrics + metrics
 
 def read_json(filename: str) -> dict:
     if filename:
@@ -151,20 +165,6 @@ def read_json(filename: str) -> dict:
             raise FileNotFoundError(f"File not found: {filename}")
         return data
     return {}
-
-def read_test_cases(filename: str) -> List[LLMTestCase]:
-    """Read test cases from a JSON file.
-    test_cases.json should be a list of dictionaries, each containing the
-    following keys:
-    - input: str
-    - actual_output: str
-    - expected_output: str
-    - retrieval_context: List[str]
-    """
-    test_cases = read_json(filename)["test_cases"]
-    
-    return [LLMTestCase(**test_case) for test_case in test_cases]
-
 
 def save_results(results: dict, filename: str) -> None:
     """Save evaluation results to a JSON file."""

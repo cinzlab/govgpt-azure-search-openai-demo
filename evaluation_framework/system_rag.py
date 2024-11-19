@@ -4,19 +4,24 @@ sys.path.append(str(Path(__file__).parent.parent / "app/backend"))
 
 import asyncio
 import os
-from typing import Any, Dict, List, Optional, cast
+import random
+from dataclasses import dataclass
 from datetime import datetime
-from dataclasses import dataclass, asdict
+from pathlib import Path
+from typing import Any, Dict, List, Optional, cast
+
 from quart import Quart
 
-from approaches.approach import Approach
-from app import bp, setup_clients
+# Local imports
+from eval_config import EvalConfig
 from config import (
     CONFIG_CHAT_APPROACH,
     CONFIG_SEARCH_CLIENT,
     CONFIG_BLOB_CONTAINER_CLIENT,
     CONFIG_USER_BLOB_CONTAINER_CLIENT
 )
+from approaches.approach import Approach
+from app import bp, setup_clients
 
 async def create_RAG_eval_app():
     app = Quart(__name__)
@@ -27,15 +32,22 @@ async def create_RAG_eval_app():
     
 async def cleanup_clients(app: Quart) -> None:
     """Cleanup all app resources and clients"""
-    await app.config[CONFIG_SEARCH_CLIENT].close()
-    await app.config[CONFIG_BLOB_CONTAINER_CLIENT].close()
+    # Close search client
+    if hasattr(app.config[CONFIG_SEARCH_CLIENT], 'close'):
+        await app.config[CONFIG_SEARCH_CLIENT].close()
+        
+    # Close blob container client
+    if hasattr(app.config[CONFIG_BLOB_CONTAINER_CLIENT], 'close'):
+        await app.config[CONFIG_BLOB_CONTAINER_CLIENT].close()
 
-    if app.config.get(CONFIG_USER_BLOB_CONTAINER_CLIENT):
-        await app.config[CONFIG_USER_BLOB_CONTAINER_CLIENT].close()
+    # Close user blob container client
+    if CONFIG_USER_BLOB_CONTAINER_CLIENT in app.config:
+        if hasattr(app.config[CONFIG_USER_BLOB_CONTAINER_CLIENT], 'close'):
+            await app.config[CONFIG_USER_BLOB_CONTAINER_CLIENT].close()
 
-    # # Close any remaining sessions
-    # if hasattr(app, '_client_session'):
-    #     await app._client_session.close()
+    # Close any remaining sessions
+    if hasattr(app, '_client_session'):
+        await app._client_session.close()
 
 @dataclass
 class SearchResult:
@@ -53,20 +65,20 @@ class SearchResult:
 @dataclass
 class TestConfig:
     """Configuration for RAG testing"""
-    retrieval_mode: str = "hybrid"
-    semantic_ranker: bool = True
-    semantic_captions: bool = False
-    top_k: int = 3
-    temperature: float = 0.0
-    suggest_followup: bool = False
-    query_language: str = "en-us"
-    query_speller: str = "lexicon"
-    max_concurrent: int = 2
-    throttle_value: int = 10
+    retrieval_mode: str
+    semantic_ranker: bool
+    semantic_captions: bool
+    top_k: int
+    temperature: float
+    suggest_followup: bool
+    query_language: str
+    query_speller: str
+    max_concurrent: int
 
     @classmethod
-    def from_env(cls) -> 'TestConfig':
+    def from_env(cls, eval_config: EvalConfig) -> 'TestConfig':
         """Create configuration from environment variables"""
+
         return cls(
             retrieval_mode=os.getenv("USE_VECTORS", "").lower() != "false" and "hybrid" or "text",
             semantic_ranker=os.getenv("AZURE_SEARCH_SEMANTIC_RANKER", "free").lower() != "disabled",
@@ -75,33 +87,47 @@ class TestConfig:
             temperature=float(os.getenv("AZURE_OPENAI_TEMPERATURE", "0")),
             suggest_followup=os.getenv("SUGGEST_FOLLOWUP_QUESTIONS", "").lower() == "true",
             query_language=os.getenv("AZURE_SEARCH_QUERY_LANGUAGE", "en-us"),
-            query_speller=os.getenv("AZURE_SEARCH_QUERY_SPELLER", "lexicon")
+            query_speller=os.getenv("AZURE_SEARCH_QUERY_SPELLER", "lexicon"),
+            max_concurrent=eval_config.max_concurrent
         )
 
 class RAG:
     """RAG system testing framework"""
-    
-    def __init__(self, app: Quart):
+    def __init__(self, app: Quart, config_path: Optional[Path] = None):
+        self.eval_config = EvalConfig.from_file(config_path)
         self.app = app
         self.approach = cast(Approach, app.config[CONFIG_CHAT_APPROACH])
-        self.config = TestConfig.from_env()
+        self.config = TestConfig.from_env(self.eval_config)
         self.max_concurrent = self.config.max_concurrent
-        self.throttle_value = self.config.throttle_value
-        # add semaphore
         self.semaphore = asyncio.Semaphore(self.max_concurrent)
 
-    async def get_contexts(self, top: int = 5) -> List[SearchResult]:
-        """Retrieve contexts from search index"""
+    async def get_contexts(self,
+                           top: int = 5,
+                           _seed: int = 42) -> List[SearchResult]:
+        """Retrieve reproducable contexts from search index"""
         contexts = []
+        total_docs = await self.app.config[CONFIG_SEARCH_CLIENT].get_document_count()
+
+        random.seed(_seed)
+        # Generate random offsets
+        if total_docs <= top:
+            offsets = list(range(total_docs))
+        else:
+            offsets = random.sample(range(total_docs), k=top)
+
+        # Retrieve documents at random offsets
         async with self.semaphore:
-            result = await self.app.config[CONFIG_SEARCH_CLIENT].search(
-                search_text="*",
-                top=top
-            )
-            async for doc in result:
-                contexts.append(SearchResult.from_doc(doc))
-        
-        return contexts
+            for offset in offsets:
+                result = await self.app.config[CONFIG_SEARCH_CLIENT].search(
+                    search_text="*",
+                    top=1,
+                    skip=offset,
+                    order_by=["id"]  # Ensure consistent ordering
+                )
+                async for doc in result:
+                    contexts.append(SearchResult.from_doc(doc))
+
+            return contexts
 
     async def ask_questions(self, questions: List[str]) -> Dict[str, Any]:
         """Run RAG testing on provided questions"""
