@@ -12,7 +12,11 @@ class EvalConfig(BaseModel):
             "test_cases": Path("eval_data/test_cases.json"),
             "eval_results": Path("eval_data/results.json"),
             "custom_metrics": Path("eval_data/custom_metrics.json"),
-            "synthetic_data": Path("synthetic_data")
+            "synthetic_data": Path("synthetic_data"),
+            # Added test paths
+            "test_config": Path("eval_config.json"),
+            "test_cases_dummy": Path("eval_data/test_cases.json"),
+            "test_cases_rag": Path("eval_data/test_cases.json")
         }
     )
     doc_retrieval_chunk_config: Dict[str, Any] = Field(
@@ -32,14 +36,13 @@ class EvalConfig(BaseModel):
     synthetic_data: Dict[str, Any] = Field(
         default={
             "goldens_per_context": 1,
-            "num_retrieved_contexts": 3,
+            "num_retrieved_contexts": 5,
         }
     )
     # Added synthesizer configuration
     synthesizer_config: Dict[str, Any] = Field(
         default={
-            "max_contexts": 2,
-            "chunk_size": 150,
+            "chunk_size": 300,
             "chunk_overlap": 50,
             "save_format": "json",
             "synt_quality": 0.5,

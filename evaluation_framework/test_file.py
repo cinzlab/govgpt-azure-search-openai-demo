@@ -13,10 +13,9 @@ from system_rag import create_RAG_eval_app, RAG
 
 logger = logging.getLogger(__name__)
 
-async def prepare_models():
+async def prepare_models(config: EvalConfig):
     """Prepare RAG system and evaluator"""
     app = await create_RAG_eval_app()
-    config = EvalConfig.from_file(Path("eval_config.json"))
     evaluator = RAGEvaluator(config, app=app)
     RAG_system = RAG(app)
     return RAG_system, evaluator
@@ -24,13 +23,15 @@ async def prepare_models():
 async def run_evaluation():
     """Run the complete evaluation process"""
     # Initialize models
-    RAG_system, evaluator = await prepare_models()
+    config = EvalConfig.from_file(Path("eval_config.json"))
+    RAG_system, evaluator = await prepare_models(config)
     # Load test data once
-    test_data = evaluator.load_test_cases("eval_data/test_cases.json")
+    test_data_rag = evaluator.load_test_cases(config.paths["test_cases_rag"])
+    test_data_dummy = evaluator.load_test_cases(config.paths["test_cases_dummy"])
     # Create dummy test cases (for expected behavior)
-    dummy_test_cases, metrics = evaluator.prepare_tests(test_data)
+    dummy_test_cases, metrics = evaluator.prepare_tests(test_data_dummy)
     # Create RAG-answered test cases (actual system responses)
-    answered_test_data = await evaluator.prepare_eval_data(test_data, RAG_system)
+    answered_test_data = await evaluator.prepare_eval_data(test_data_rag, RAG_system)
     answered_test_cases, _ = evaluator.prepare_tests(answered_test_data)
     
     return dummy_test_cases, answered_test_cases, metrics

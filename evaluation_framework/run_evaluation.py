@@ -38,26 +38,24 @@ class EvaluationPipeline:
 
             if self.config.eval_pipeline["use_test_cases"]:
                 user_eval_data = evaluator.load_test_cases(self.config.paths["test_cases"])
-                eval_data.append(user_eval_data)
+                eval_data += user_eval_data
 
             if self.config.eval_pipeline["generate_synthetic_data"]:
                 contexts = await RAG_system.get_contexts(top=self.config.synthetic_data["num_retrieved_contexts"])
                 context_texts = [[ctx.content] for ctx in contexts if ctx.content]
 
                 goldens = await synthetaze_data(documents=context_texts,
-                                                max_contexts=self.config.synthetic_data["goldens_per_context"],
-                                                save_path=self.config.paths["synthetic_data"],
+                                                eval_config=self.config,
                                                 app_config=app,
                                                 gen_from_docs=False)
                 goldens_data = evaluator.prepare_goldens(goldens)
-                eval_data.append(goldens_data)
+ 
                 synth_eval_data = await evaluator.prepare_eval_data(goldens_data, RAG_system)
-                eval_data.append(synth_eval_data)
+                eval_data += synth_eval_data
 
             if len(eval_data) > 0:
-                results = await evaluator._evaluate(eval_data)
+                await evaluator._evaluate(eval_data)
                 logger.info("Evaluation pipeline completed successfully")
-                return results
             else:
                 raise ValueError("No evaluation data to run")
             

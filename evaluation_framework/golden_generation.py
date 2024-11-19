@@ -18,7 +18,7 @@ from deepeval.synthesizer.config import (
 )
 
 from models import ConfigLoader, ModelFactory
-from evaluation_framework.eval_config import EvalConfig
+from eval_config import EvalConfig
 
 SaveFormat = Literal['json', 'csv']
 load_dotenv()
@@ -41,8 +41,9 @@ class SynthesizerConfig:
     def from_eval_config(cls, eval_config: EvalConfig) -> 'SynthesizerConfig':
         """Create SynthesizerConfig from EvalConfig"""
         config = eval_config.synthesizer_config
+        max_items = eval_config.synthetic_data["goldens_per_context"]
         return cls(
-            max_contexts=config["max_contexts"],
+            max_contexts=max_items,
             chunk_size=config["chunk_size"],
             chunk_overlap=config["chunk_overlap"],
             save_format=config["save_format"],
