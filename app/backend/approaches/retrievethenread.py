@@ -16,26 +16,51 @@ class RetrieveThenReadApproach(Approach):
     top documents from search, then constructs a prompt with them, and then uses OpenAI to generate an completion
     (answer) with that prompt.
     """
+# GovGPT prompts
+#     system_chat_template = (
+#         "You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions. "
+#         + "Use 'you' to refer to the individual asking the questions even if they ask with 'I'. "
+#         + "Answer the following question using only the data provided in the sources below. "
+#         + "Each source has a name followed by colon and the actual information, always include the source name for each fact you use in the response. "
+#         + "If you cannot answer using the sources below, say you don't know. Use below example to answer"
+#     )
+
+#     # shots/sample conversation
+#     question = """
+# 'What is the deductible for the employee plan for a visit to Overlake in Bellevue?'
+
+# Sources:
+# info1.txt: deductibles depend on whether you are in-network or out-of-network. In-network deductibles are $500 for employee and $1000 for family. Out-of-network deductibles are $1000 for employee and $2000 for family.
+# info2.pdf: Overlake is in-network for the employee plan.
+# info3.pdf: Overlake is the name of the area that includes a park and ride near Bellevue.
+# info4.pdf: In-network institutions include Overlake, Swedish and others in the region
+# """
+#     answer = "In-network deductibles are $500 for employee and $1000 for family [info1.txt] and Overlake is in-network for the employee plan [info2.pdf][info4.pdf]."
+
+
+#EduGPT prompts
 
     system_chat_template = (
-        "You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions. "
+        "You are EduGPT, an intelligent assistant helping teachers access curriculum content and create lesson plans more efficiently from a limited set of New Zealand educational sources. "
         + "Use 'you' to refer to the individual asking the questions even if they ask with 'I'. "
         + "Answer the following question using only the data provided in the sources below. "
-        + "Each source has a name followed by colon and the actual information, always include the source name for each fact you use in the response. "
-        + "If you cannot answer using the sources below, say you don't know. Use below example to answer"
+        + "Each source has a name followed by a colon and the actual information; always include the source name for each fact you use in the response. "
+        + "If you cannot answer using the sources below, say you don't know. Use the example below to guide your answer."
     )
 
     # shots/sample conversation
     question = """
-'What is the deductible for the employee plan for a visit to Overlake in Bellevue?'
+'Can you help me create a lesson plan on persuasive writing for my Year 8 English class?'
 
 Sources:
-info1.txt: deductibles depend on whether you are in-network or out-of-network. In-network deductibles are $500 for employee and $1000 for family. Out-of-network deductibles are $1000 for employee and $2000 for family.
-info2.pdf: Overlake is in-network for the employee plan.
-info3.pdf: Overlake is the name of the area that includes a park and ride near Bellevue.
-info4.pdf: In-network institutions include Overlake, Swedish and others in the region
+curriculum1.txt: Persuasive writing involves stating a clear position, supporting it with evidence, and convincing the reader.
+curriculum2.pdf: Year 8 English curriculum focuses on developing writing skills, including persuasive and argumentative texts.
+curriculum3.pdf: Lesson planning should include activities like debates, essay writing, and peer review sessions.
+curriculum4.pdf: Key concepts for Year 8 include understanding audience, purpose, and the use of persuasive language techniques.
 """
-    answer = "In-network deductibles are $500 for employee and $1000 for family [info1.txt] and Overlake is in-network for the employee plan [info2.pdf][info4.pdf]."
+    answer = "Certainly, for a Year 8 English class on persuasive writing, you should focus on stating a clear position and supporting it with evidence [curriculum1.txt][curriculum2.pdf]. Incorporate activities like debates, essay writing, and peer review sessions [curriculum3.pdf]. Emphasize key concepts such as understanding the audience, purpose, and persuasive language techniques [curriculum4.pdf]."
+
+
 
     def __init__(
         self,
