@@ -8,7 +8,7 @@ os.environ["OPENAI_API_KEY"] = "default key"
 from dotenv import load_dotenv
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Literal, Optional
+from typing import List, Literal, Optional, Dict
 
 from quart import Quart
 from deepeval.synthesizer import Synthesizer
@@ -133,7 +133,7 @@ async def synthetaze_data(
     eval_config: EvalConfig,
     app_config: Optional[Quart] = None,
     gen_from_docs: bool = True
-) -> None:
+) -> List[Dict]:
     """
     Generate synthetic data from provided documents or contexts.
     
@@ -146,4 +146,4 @@ async def synthetaze_data(
     custom_config = SynthesizerConfig.from_eval_config(eval_config)
     generator = SyntheticDataGenerator(custom_config, app_config)
     goldens = generator.generate(documents, gen_from_docs=gen_from_docs)
-    return goldens
+    return [g.model_dump() for g in goldens]

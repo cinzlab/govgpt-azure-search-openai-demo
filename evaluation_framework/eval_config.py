@@ -13,6 +13,7 @@ class EvalConfig(BaseModel):
             "eval_results": Path("eval_data/results.json"),
             "custom_metrics": Path("eval_data/custom_metrics.json"),
             "synthetic_data": Path("synthetic_data"),
+            "synthetic_data_answered": Path("synthetic_data/synthetic_data_answered.json"),
             # Added test paths
             "test_config": Path("eval_config.json"),
             "test_cases_dummy": Path("eval_data/test_cases.json"),

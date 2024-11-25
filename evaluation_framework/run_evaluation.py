@@ -14,8 +14,6 @@ from golden_generation import synthetaze_data
 
 
 logger = logging.getLogger(__name__)
-
-from dotenv import load_dotenv
 load_dotenv()
 
 class EvaluationPipeline:
@@ -49,8 +47,11 @@ class EvaluationPipeline:
                                                 app_config=app,
                                                 gen_from_docs=False)
                 goldens_data = evaluator.prepare_goldens(goldens)
- 
-                synth_eval_data = await evaluator.prepare_eval_data(goldens_data, RAG_system)
+
+                synth_data_path = Path(self.config.paths["synthetic_data_answered"])
+                synth_eval_data = await evaluator.prepare_eval_data(goldens_data,
+                                                                    RAG_system,
+                                                                    synth_data_path)
                 eval_data += synth_eval_data
 
             if len(eval_data) > 0:
@@ -61,7 +62,7 @@ class EvaluationPipeline:
             
         except Exception as e:
             logger.error(f"Pipeline failed: {str(e)}")
-            raise ValueError(f"Pipeline failed: {str(e)}") from e
+            raise e
             
         finally:
             await cleanup_clients(app)

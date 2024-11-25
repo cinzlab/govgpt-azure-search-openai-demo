@@ -6,6 +6,7 @@ recall, relevancy, faithfulness, and legal risk assessment.
 
 import json
 from typing import List, Dict, Optional
+from pathlib import Path
 from quart import Quart
 from dotenv import load_dotenv
 
@@ -23,6 +24,7 @@ from deepeval.test_case import LLMTestCase, LLMTestCaseParams
 
 from models import ConfigLoader, ModelFactory
 from system_rag import RAG
+from utils import read_json, save_results
 
 load_dotenv()
 
@@ -43,11 +45,14 @@ class RAGEvaluator:
         self.app = app
         # Initialize configuration
         if self.app:
-            self.llm_model = create_model_from_app_config(self.app)
+            self.llm_model = self.create_model_from_app_config(self.app)
         else:
-            self.llm_model = create_llm_model()
+            self.llm_model = self.create_llm_model()
 
-    async def prepare_eval_data(self, eval_data: List[Dict], rag_system: RAG) -> List[Dict]:
+    async def prepare_eval_data(self,
+                                eval_data: List[Dict],
+                                rag_system: RAG,
+                                save_path: Optional[Path] = None) -> List[Dict]:
         """Process goldens and return evaluation data"""
         # Process all questions in one batch
         questions = [eval_case["input"] for eval_case in eval_data]
@@ -58,12 +63,14 @@ class RAGEvaluator:
             _context = answers["results"][i]["context"]['data_points']["text"]
             eval_case["actual_output"] = _answer
             eval_case["retrieval_context"] = _context
-
+        
+        if save_path:
+            with open(save_path, "w") as f:
+                json.dump(eval_data, f)
         return eval_data
     
     def prepare_goldens(self, goldens: List[Dict]) -> List[Dict]:
         """Prepare goldens for evaluation"""
-        goldens = [g.model_dump() for g in goldens]
         eval_data_list = []
         for golden in goldens:
             eval_data = {
@@ -80,7 +87,7 @@ class RAGEvaluator:
         eval_data: List of evaluation data
         """
         custom_metrics = read_json(self.custom_metrics)
-        metrics = create_metrics(self.llm_model, custom_metrics)
+        metrics = self.create_metrics(self.llm_model, custom_metrics)
 
         test_cases = [LLMTestCase(**test_case) for test_case in eval_data]
 
@@ -106,67 +113,54 @@ class RAGEvaluator:
     def prepare_tests(self, test_cases: List[Dict]) -> None:
         """Run tests on the provided test cases"""
         custom_metrics = read_json(self.custom_metrics)
-        metrics = create_metrics(self.llm_model, custom_metrics)
+        metrics = self.create_metrics(self.llm_model, custom_metrics)
         
         test_cases = [LLMTestCase(**test_case) for test_case in test_cases]
         return test_cases, metrics
 
+    @staticmethod
+    def create_llm_model() -> DeepEvalBaseLLM:
+        llm_config = ConfigLoader.load_llm_config()
+        llm_model = ModelFactory.create_llm_model(llm_config)
+        return llm_model
 
-def create_llm_model() -> DeepEvalBaseLLM:
-    llm_config = ConfigLoader.load_llm_config()
-    llm_model = ModelFactory.create_llm_model(llm_config)
-    return llm_model
+    @staticmethod
+    def create_model_from_app_config(current_app):
+        llm_model, _ = ModelFactory.from_app_config(current_app)
+        return llm_model
 
-def create_model_from_app_config(current_app):
-    llm_model, _ = ModelFactory.from_app_config(current_app)
-    return llm_model
-
-def create_metrics(eval_model: DeepEvalBaseLLM,
-                   custom_metrics: Optional[Dict]=[]) -> List:
-    """Create a list of evaluation metrics."""
-    default_metrics = [
-        ContextualPrecisionMetric(model=eval_model, include_reason=False),
-        ContextualRecallMetric(model=eval_model, include_reason=False),
-        ContextualRelevancyMetric(model=eval_model, include_reason=False),
-        AnswerRelevancyMetric(model=eval_model, include_reason=False),
-        FaithfulnessMetric(model=eval_model, include_reason=False),
-    ]
-    if not custom_metrics:
-        return default_metrics
-    
-    if "metrics" not in custom_metrics:
-        raise ValueError("custom_metrics must contain 'metrics' key")
+    @staticmethod
+    def create_metrics(eval_model: DeepEvalBaseLLM,
+                      custom_metrics: Optional[Dict] = []) -> List:
+        """Create a list of evaluation metrics."""
+        default_metrics = [
+            ContextualPrecisionMetric(model=eval_model, include_reason=False),
+            ContextualRecallMetric(model=eval_model, include_reason=False),
+            ContextualRelevancyMetric(model=eval_model, include_reason=False),
+            AnswerRelevancyMetric(model=eval_model, include_reason=False),
+            FaithfulnessMetric(model=eval_model, include_reason=False),
+        ]
+        if not custom_metrics:
+            return default_metrics
         
-    if not isinstance(custom_metrics["metrics"], list):
-        raise ValueError("custom_metrics['metrics'] must be a list")
+        if "metrics" not in custom_metrics:
+            raise ValueError("custom_metrics must contain 'metrics' key")
+            
+        if not isinstance(custom_metrics["metrics"], list):
+            raise ValueError("custom_metrics['metrics'] must be a list")
 
-    # Create custom metrics
-    metrics = []
-    for metric in custom_metrics["metrics"]:
-        try:
-            metric_object = GEval(
-                model=eval_model,
-                name=metric["name"],
-                criteria=metric["description"],
-                evaluation_params=[LLMTestCaseParams.INPUT,
-                                   LLMTestCaseParams.ACTUAL_OUTPUT]
-            )
-            metrics.append(metric_object)
-        except Exception as e:
-            raise ValueError(f"Error creating metric {metric['name']}: {str(e)}") from e
-    return default_metrics + metrics
-
-def read_json(filename: str) -> dict:
-    if filename:
-        try:
-            with open(filename, "r") as f:
-                data = json.load(f)
-        except FileNotFoundError:
-            raise FileNotFoundError(f"File not found: {filename}")
-        return data
-    return {}
-
-def save_results(results: dict, filename: str) -> None:
-    """Save evaluation results to a JSON file."""
-    with open(filename, "w") as f:
-        json.dump(results.model_dump(), f, indent=4)
+        # Create custom metrics
+        metrics = []
+        for metric in custom_metrics["metrics"]:
+            try:
+                metric_object = GEval(
+                    model=eval_model,
+                    name=metric["name"],
+                    criteria=metric["description"],
+                    evaluation_params=[LLMTestCaseParams.INPUT,
+                                    LLMTestCaseParams.ACTUAL_OUTPUT]
+                )
+                metrics.append(metric_object)
+            except Exception as e:
+                raise ValueError(f"Error creating metric {metric['name']}: {str(e)}") from e
+        return default_metrics + metrics
