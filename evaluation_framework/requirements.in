@@ -25,9 +25,12 @@ Pillow
 types-Pillow
 pypdf
 PyMuPDF
+plotly==5.24.1
+streamlit==1.40.2
 beautifulsoup4
 types-beautifulsoup4
 msgraph-sdk==1.1.0
 openai-messages-token-helper
 deepeval==1.5.6
 instructor==1.4
+fpdf==1.7.2
