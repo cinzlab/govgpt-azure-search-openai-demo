@@ -1,0 +1,19 @@
+{
+    "test_cases": [
+        {
+        "input": "answer a question: 1 + 1 equal?",
+        "actual_output": "answer on this one: 1 + 1 is 2",
+        "expected_output": "answer on this one: 1 + 1 is 2",
+        "context": ["equashion 1 + 1 is simple math equashion with answer - 2"],
+        "retrieval_context": ["equashion 1 + 1 is simple math equashion with answer - 2"]
+        },
+        {
+        "input": "answer a question: 1 + 2 equal?",
+        "actual_output": "answer on this one: 1 + 2 is 3",
+        "expected_output": "answer on this one: 1 + 2 is 3",
+        "context": ["equashion 1 + 1 is simple math equashion with answer - 2"],
+        "retrieval_context": ["equashion 1 + 2 is simple math equashion with answer - 3"]
+        }
+    ]
+
+}

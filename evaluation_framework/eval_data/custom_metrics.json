@@ -1,0 +1,8 @@
+{
+    "metrics": [
+        {
+        "name": "Correctness",
+        "description": "Determine whether the actual output is factually correct based on the expected output."
+        }
+    ]
+}
