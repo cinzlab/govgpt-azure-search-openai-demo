@@ -40,8 +40,13 @@ class RetrieveThenReadApproach(Approach):
 
 #EduGPT prompts
 
+    # CoT prompt
+    with open('/workspaces/edugpt-azure-search-openai-demo/app/backend/approaches/CoT_prompt.txt', 'r') as f:
+        cot_content = f.read()
+
     system_chat_template = (
-        "You are EduGPT, an intelligent assistant helping teachers access curriculum content and create lesson plans more efficiently from a limited set of New Zealand educational sources. "
+        cot_content
+        + "You are EduGPT, an intelligent assistant helping teachers access curriculum content and create lesson plans more efficiently from a limited set of New Zealand educational sources. "
         + "Use 'you' to refer to the individual asking the questions even if they ask with 'I'. "
         + "Answer the following question using only the data provided in the sources below. "
         + "Each source has a name followed by a colon and the actual information; always include the source name for each fact you use in the response. "

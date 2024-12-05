@@ -59,6 +59,12 @@ class ChatApproach(Approach, ABC):
 
 
 #EduGPT query prompt
+
+# CoT prompt
+    with open('/workspaces/edugpt-azure-search-openai-demo/app/backend/approaches/CoT_prompt.txt', 'r') as f:
+        cot_content = f.read()
+
+        
     query_prompt_template = """Use the conversation and the new user question to generate a search query for the Azure AI Search index containing thousands of documents.
 Guidelines:
 - **Exclusions**: Do not include filenames, document names, or text within "[ ]" or "<< >>" in the search terms.
@@ -74,7 +80,7 @@ Guidelines:
 - **Referencing**: Every fact in your response must include a citation from the indexed documents using square brackets, e.g. [source_name.html]. **Do not provide any fact without a citation.** If you cannot find relevant information, refuse to answer. Cite sources separately and do not combine them.
 - **Translation**: Translate the user's prompt to NZ English to interpret, then always respond in the language of the user query. All English outputs must be in New Zealand English.
 - **Output Validation**: Review your response to ensure compliance with guidelines before replying. Refuse to answer if inappropriate or unrelated to educational content or lesson planning.
-"""
+""" + "\n" + "- **Chain of Thoughts**:" + cot_content
 
 
     @property

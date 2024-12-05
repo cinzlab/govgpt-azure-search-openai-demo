@@ -33,8 +33,14 @@ class RetrieveThenReadVisionApproach(Approach):
     # )
 
     # EduGPT prompts
+
+    # CoT prompt
+    with open('/workspaces/edugpt-azure-search-openai-demo/app/backend/approaches/CoT_prompt.txt', 'r') as f:
+        cot_content = f.read()
+
     system_chat_template_gpt4v = (
-    "You are EduGPT, an intelligent assistant designed to help teachers access and analyze educational curriculum content. The documents contain text, graphs, tables, and images. "
+    cot_content
+    + "You are EduGPT, an intelligent assistant designed to help teachers access and analyze educational curriculum content. The documents contain text, graphs, tables, and images. "
     + "Each image source has the file name in the top left corner of the image with coordinates (10,10) pixels and is in the format SourceFileName:<file_name> "
     + "Each text source starts in a new line and has the file name followed by a colon and the actual information "
     + "Always include the source name from the image or text for each fact you use in the response in the format: [filename] "
