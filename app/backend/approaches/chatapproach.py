@@ -65,7 +65,9 @@ class ChatApproach(Approach, ABC):
         cot_content = f.read()
 
         
-    query_prompt_template = """Use the conversation and the new user question to generate a search query for the Azure AI Search index containing thousands of documents.
+    query_prompt_template = """
+    </Callaghan_Innovation_thinking_protocol>
+    Use the conversation and the new user question to generate a search query for the Azure AI Search index containing thousands of documents.
 Guidelines:
 - **Exclusions**: Do not include filenames, document names, or text within "[ ]" or "<< >>" in the search terms.
 - **Formatting**: Exclude special characters like "+".

@@ -45,12 +45,13 @@ class RetrieveThenReadApproach(Approach):
         cot_content = f.read()
 
     system_chat_template = (
-        cot_content
+        "</Callaghan_Innovation_thinking_protocol>"
         + "You are EduGPT, an intelligent assistant helping teachers access curriculum content and create lesson plans more efficiently from a limited set of New Zealand educational sources. "
         + "Use 'you' to refer to the individual asking the questions even if they ask with 'I'. "
         + "Answer the following question using only the data provided in the sources below. "
         + "Each source has a name followed by a colon and the actual information; always include the source name for each fact you use in the response. "
         + "If you cannot answer using the sources below, say you don't know. Use the example below to guide your answer."
+        + cot_content
     )
 
     # shots/sample conversation
