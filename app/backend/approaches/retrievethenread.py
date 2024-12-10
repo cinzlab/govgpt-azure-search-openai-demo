@@ -45,26 +45,103 @@ class RetrieveThenReadApproach(Approach):
         cot_content = f.read()
 
     system_chat_template = (
-        "</Callaghan_Innovation_thinking_protocol>"
+        "<thinking_protocol>"
         + "You are EduGPT, an intelligent assistant helping teachers access curriculum content and create lesson plans more efficiently from a limited set of New Zealand educational sources. "
         + "Use 'you' to refer to the individual asking the questions even if they ask with 'I'. "
         + "Answer the following question using only the data provided in the sources below. "
         + "Each source has a name followed by a colon and the actual information; always include the source name for each fact you use in the response. "
         + "If you cannot answer using the sources below, say you don't know. Use the example below to guide your answer."
-        + cot_content
+        + "Every fact in your response must include a citation from the indexed documents using square brackets, e.g. [source_name.html]. **Do not provide any fact without a citation.** If you cannot find relevant information, refuse to answer. Cite sources separately and do not combine them."
     )
 
     # shots/sample conversation
     question = """
-'Can you help me create a lesson plan on persuasive writing for my Year 8 English class?'
+    'Can you help me create a detailed lesson plan on persuasive writing for my Year 8 English class, including specific activities, timelines, and resources?'
 
-Sources:
-curriculum1.txt: Persuasive writing involves stating a clear position, supporting it with evidence, and convincing the reader.
-curriculum2.pdf: Year 8 English curriculum focuses on developing writing skills, including persuasive and argumentative texts.
-curriculum3.pdf: Lesson planning should include activities like debates, essay writing, and peer review sessions.
-curriculum4.pdf: Key concepts for Year 8 include understanding audience, purpose, and the use of persuasive language techniques.
-"""
-    answer = "Certainly, for a Year 8 English class on persuasive writing, you should focus on stating a clear position and supporting it with evidence [curriculum1.txt][curriculum2.pdf]. Incorporate activities like debates, essay writing, and peer review sessions [curriculum3.pdf]. Emphasize key concepts such as understanding the audience, purpose, and persuasive language techniques [curriculum4.pdf]."
+    Sources:
+    curriculum1.txt: Persuasive writing involves stating a clear position, supporting it with evidence, and convincing the reader.
+    curriculum2.pdf: Year 8 English curriculum focuses on developing writing skills, including persuasive and argumentative texts.
+    curriculum3.pdf: Lesson planning should include activities like debates, essay writing, and peer review sessions.
+    curriculum4.pdf: Key concepts for Year 8 include understanding audience, purpose, and the use of persuasive language techniques.
+    """
+
+    answer = """
+    Certainly! Here's a comprehensive lesson plan for a Year 8 English class on persuasive writing:
+
+    ---
+
+    **Lesson Title:** Introduction to Persuasive Writing
+
+    **Objective:** 
+    - Students will understand the components of persuasive writing.
+    - Students will be able to state a clear position and support it with evidence.
+    - Students will apply persuasive language techniques to convince their audience.
+
+    **Materials Needed:** 
+    - Examples of persuasive essays/articles
+    - Debate topics list
+    - Writing materials (paper, pens, computers)
+    - Peer review checklists
+    - Projector and whiteboard
+
+    **Lesson Duration:** 90 minutes
+
+    **Lesson Outline:**
+
+    1. **Introduction (10 minutes)**
+    - **Activity:** Begin with a brief discussion on what persuasive writing is and its importance.
+    - **Reference:** [curriculum1.txt][curriculum2.pdf]
+
+    2. **Understanding Components (15 minutes)**
+    - **Lecture:** Explain the key components: clear position, supporting evidence, and persuasive techniques.
+    - **Example Analysis:** Review excerpts from persuasive texts to identify these components.
+    - **Reference:** [curriculum1.txt][curriculum2.pdf]
+
+    3. **Audience and Purpose (10 minutes)**
+    - **Discussion:** How knowing the audience and purpose shapes the writing.
+    - **Activity:** Identify the audience and purpose in given examples.
+    - **Reference:** [curriculum4.pdf]
+
+    4. **Persuasive Language Techniques (15 minutes)**
+    - **Lecture:** Introduce techniques such as rhetorical questions, emotive language, repetition, and strong evidence.
+    - **Activity:** Highlight these techniques in sample texts.
+    - **Reference:** [curriculum4.pdf]
+
+    5. **Structured Debate (20 minutes)**
+    - **Activity:** Divide the class into groups and assign debate topics.
+    - **Task:** Each group prepares arguments supporting their position using persuasive techniques.
+    - **Reference:** [curriculum3.pdf]
+
+    6. **Essay Writing Workshop (20 minutes)**
+    - **Activity:** Students begin drafting their own persuasive essays on a chosen topic.
+    - **Guidance:** Provide a basic outline to structure their essays.
+    - **Reference:** [curriculum3.pdf][curriculum2.pdf]
+
+    7. **Peer Review Introduction (5 minutes)**
+    - **Explanation:** Introduce the peer review process and distribute checklists.
+    - **Task:** Explain how to give constructive feedback.
+    - **Reference:** [curriculum3.pdf]
+
+    **Homework:**
+    - Complete the first draft of the persuasive essay.
+    - Exchange essays with a peer for review using the provided checklist.
+
+    **Assessment:**
+    - Participation in debates.
+    - Quality and clarity of the essay drafts.
+    - Use of persuasive techniques and supporting evidence.
+    - Effectiveness of peer feedback.
+
+    **Extensions:**
+    - Incorporate multimedia elements into persuasive presentations.
+    - Explore persuasive writing in different formats (e.g., letters to the editor, advertisements).
+
+    ---
+
+    This lesson plan provides a structured approach to teaching persuasive writing, incorporating interactive activities and ensuring alignment with the Year 8 English curriculum standards.
+
+    [References: curriculum1.txt, curriculum2.pdf, curriculum3.pdf, curriculum4.pdf]
+    """
 
 
 
