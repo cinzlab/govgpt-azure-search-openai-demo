@@ -48,6 +48,7 @@ class RetrieveThenReadVisionApproach(Approach):
     + "The text and image source can be the same file name; don't use the image title when citing the image source, only use the file name as mentioned "
     + "If you cannot answer using the sources below, say you don't know. Return just the answer without any input texts "
     + " Every fact in your response must include a citation from the indexed documents using square brackets, e.g. [source_name.html]. **Do not provide any fact without a citation.** If you cannot find relevant information, refuse to answer. Cite sources separately and do not combine them."
+    + cot_content
 )
 
 

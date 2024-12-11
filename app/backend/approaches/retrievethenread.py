@@ -52,6 +52,7 @@ class RetrieveThenReadApproach(Approach):
         + "Each source has a name followed by a colon and the actual information; always include the source name for each fact you use in the response. "
         + "If you cannot answer using the sources below, say you don't know. Use the example below to guide your answer."
         + "Every fact in your response must include a citation from the indexed documents using square brackets, e.g. [source_name.html]. **Do not provide any fact without a citation.** If you cannot find relevant information, refuse to answer. Cite sources separately and do not combine them."
+        + cot_content
     )
 
     # shots/sample conversation
@@ -66,81 +67,89 @@ class RetrieveThenReadApproach(Approach):
     """
 
     answer = """
-    Certainly! Here's a comprehensive lesson plan for a Year 8 English class on persuasive writing:
+    Certainly! Here's the enhanced lesson plan for a Year 8 English class on persuasive writing with added specific course subject content:
 
-    ---
+---
 
-    **Lesson Title:** Introduction to Persuasive Writing
+**Lesson Title:** Introduction to Persuasive Writing
 
-    **Objective:** 
-    - Students will understand the components of persuasive writing.
-    - Students will be able to state a clear position and support it with evidence.
-    - Students will apply persuasive language techniques to convince their audience.
+**Objective:** 
+- Students will understand the components of persuasive writing.
+- Students will be able to state a clear position and support it with evidence.
+- Students will apply persuasive language techniques to convince their audience.
 
-    **Materials Needed:** 
-    - Examples of persuasive essays/articles
-    - Debate topics list
-    - Writing materials (paper, pens, computers)
-    - Peer review checklists
-    - Projector and whiteboard
+**Materials Needed:** 
+- Examples of persuasive essays/articles (e.g., excerpts from "I Have a Dream" by Martin Luther King Jr., opinion pieces from school newspapers)
+- Debate topics list (e.g., "Should homework be banned?", "Is technology making us more isolated?")
+- Writing materials (paper, pens, computers)
+- Peer review checklists
+- Projector and whiteboard
+- Textbook chapters on persuasive writing (e.g., Chapter 5: Persuasive Techniques)
 
-    **Lesson Duration:** 90 minutes
+**Lesson Duration:** 90 minutes
 
-    **Lesson Outline:**
+**Lesson Outline:**
 
-    1. **Introduction (10 minutes)**
+1. **Introduction (10 minutes)**
     - **Activity:** Begin with a brief discussion on what persuasive writing is and its importance.
+    - **Specific Content:** Show a short video clip from a persuasive speech (e.g., a segment of Martin Luther King Jr.'s "I Have a Dream") to illustrate effective persuasion.
     - **Reference:** [curriculum1.txt][curriculum2.pdf]
 
-    2. **Understanding Components (15 minutes)**
+2. **Understanding Components (15 minutes)**
     - **Lecture:** Explain the key components: clear position, supporting evidence, and persuasive techniques.
-    - **Example Analysis:** Review excerpts from persuasive texts to identify these components.
+    - **Example Analysis:** Review excerpts from persuasive texts, such as an opinion article from the school newspaper, to identify these components.
+    - **Specific Content:** Highlight how the author states their position clearly in the introduction, uses statistics and quotes as evidence, and employs emotional appeals.
     - **Reference:** [curriculum1.txt][curriculum2.pdf]
 
-    3. **Audience and Purpose (10 minutes)**
+3. **Audience and Purpose (10 minutes)**
     - **Discussion:** How knowing the audience and purpose shapes the writing.
-    - **Activity:** Identify the audience and purpose in given examples.
+    - **Activity:** Provide students with different scenarios (e.g., writing to convince the school to adopt a longer lunch break vs. writing to persuade parents to support a new school policy) and have them identify the audience and purpose.
+    - **Specific Content:** Discuss how the tone and language change based on whether the audience is peers, teachers, or parents.
     - **Reference:** [curriculum4.pdf]
 
-    4. **Persuasive Language Techniques (15 minutes)**
+4. **Persuasive Language Techniques (15 minutes)**
     - **Lecture:** Introduce techniques such as rhetorical questions, emotive language, repetition, and strong evidence.
-    - **Activity:** Highlight these techniques in sample texts.
+    - **Activity:** Highlight these techniques in sample texts from the textbook's persuasive writing section.
+    - **Specific Content:** Provide examples like rhetorical questions ("Shouldn't we all strive for a cleaner environment?"), emotive language ("heartbreaking statistics on plastic pollution"), and repetition ("We must act now, we must act decisively, we must act together").
     - **Reference:** [curriculum4.pdf]
 
-    5. **Structured Debate (20 minutes)**
-    - **Activity:** Divide the class into groups and assign debate topics.
-    - **Task:** Each group prepares arguments supporting their position using persuasive techniques.
+5. **Structured Debate (20 minutes)**
+    - **Activity:** Divide the class into groups and assign debate topics from the list (e.g., "Should homework be banned?", "Is technology making us more isolated?").
+    - **Task:** Each group prepares arguments supporting their position using the persuasive techniques discussed.
+    - **Specific Content:** Encourage students to incorporate at least two persuasive techniques in their arguments and use evidence from credible sources (e.g., textbook facts, classroom research).
     - **Reference:** [curriculum3.pdf]
 
-    6. **Essay Writing Workshop (20 minutes)**
-    - **Activity:** Students begin drafting their own persuasive essays on a chosen topic.
-    - **Guidance:** Provide a basic outline to structure their essays.
+6. **Essay Writing Workshop (20 minutes)**
+    - **Activity:** Students begin drafting their own persuasive essays on a chosen topic from a provided list (e.g., "Should school uniforms be mandatory?", "Is animal testing justified?").
+    - **Guidance:** Provide a basic outline to structure their essays, including introduction with thesis statement, body paragraphs with evidence, and a conclusion.
+    - **Specific Content:** Reference textbook guidelines on essay structure and provide a sample outline on the board.
     - **Reference:** [curriculum3.pdf][curriculum2.pdf]
 
-    7. **Peer Review Introduction (5 minutes)**
-    - **Explanation:** Introduce the peer review process and distribute checklists.
-    - **Task:** Explain how to give constructive feedback.
+7. **Peer Review Introduction (5 minutes)**
+    - **Explanation:** Introduce the peer review process and distribute checklists based on textbook criteria.
+    - **Task:** Explain how to give constructive feedback, focusing on clarity of position, strength of evidence, and use of persuasive techniques.
+    - **Specific Content:** Demonstrate with a short example by reviewing a sample paragraph from the textbook.
     - **Reference:** [curriculum3.pdf]
 
-    **Homework:**
-    - Complete the first draft of the persuasive essay.
-    - Exchange essays with a peer for review using the provided checklist.
+**Homework:**
+- Complete the first draft of the persuasive essay.
+- Exchange essays with a peer for review using the provided checklist.
 
-    **Assessment:**
-    - Participation in debates.
-    - Quality and clarity of the essay drafts.
-    - Use of persuasive techniques and supporting evidence.
-    - Effectiveness of peer feedback.
+**Assessment:**
+- Participation in debates.
+- Quality and clarity of the essay drafts.
+- Use of persuasive techniques and supporting evidence.
+- Effectiveness of peer feedback.
 
-    **Extensions:**
-    - Incorporate multimedia elements into persuasive presentations.
-    - Explore persuasive writing in different formats (e.g., letters to the editor, advertisements).
+**Extensions:**
+- Incorporate multimedia elements into persuasive presentations, such as creating a video advertisement.
+- Explore persuasive writing in different formats (e.g., letters to the editor, advertisements) using examples from the textbook's supplementary materials.
 
-    ---
+---
 
-    This lesson plan provides a structured approach to teaching persuasive writing, incorporating interactive activities and ensuring alignment with the Year 8 English curriculum standards.
+This enhanced lesson plan provides a structured approach to teaching persuasive writing, incorporating specific examples and content from textbooks to enrich the learning experience and ensure alignment with the Year 8 English curriculum standards.
 
-    [References: curriculum1.txt, curriculum2.pdf, curriculum3.pdf, curriculum4.pdf]
+[References: curriculum1.txt, curriculum2.pdf, curriculum3.pdf, curriculum4.pdf]
     """
 
 
@@ -222,7 +231,7 @@ class RetrieveThenReadApproach(Approach):
         content = "\n".join(sources_content)
         user_content = q + "\n" + f"Sources:\n {content}"
 
-        response_token_limit = 1024
+        response_token_limit = 4096
         updated_messages = build_messages(
             model=self.chatgpt_model,
             system_prompt=overrides.get("prompt_template", self.system_chat_template),

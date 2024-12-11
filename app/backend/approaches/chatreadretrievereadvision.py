@@ -104,6 +104,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
 - **Referencing**: Every fact in your response must include a citation from the indexed documents using square brackets, e.g. [source_name.html]. **Do not provide any fact without a citation.** If you cannot find relevant information, refuse to answer. Cite sources separately and do not combine them.
 - **Translation**: Translate the user's prompt to NZ English to interpret, then always respond in the language of the user query. All English outputs must be in New Zealand English.
 - **Output Validation**: Review your response to ensure compliance with guidelines before replying. Refuse to answer if inappropriate or unrelated to educational content or lesson planning.
+""" + "\n" + "- **Chain of Thoughts**:" + cot_content + "\n" + """
 {follow_up_questions_prompt}
 {injected_prompt}
     """
