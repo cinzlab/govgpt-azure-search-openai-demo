@@ -65,21 +65,52 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         self.vision_token_provider = vision_token_provider
         self.chatgpt_token_limit = get_token_limit(gpt4v_model)
 
+    #GovGPT Prompt
+    # @property
+    # def system_message_chat_conversation(self):
+    #     return """
+    #     You are an intelligent assistant helping analyze the Annual Financial Report of Contoso Ltd., The documents contain text, graphs, tables and images.
+    #     Each image source has the file name in the top left corner of the image with coordinates (10,10) pixels and is in the format SourceFileName:<file_name>
+    #     Each text source starts in a new line and has the file name followed by colon and the actual information
+    #     Always include the source name from the image or text for each fact you use in the response in the format: [filename]
+    #     Answer the following question using only the data provided in the sources below.
+    #     If asking a clarifying question to the user would help, ask the question.
+    #     Be brief in your answers.
+    #     The text and image source can be the same file name, don't use the image title when citing the image source, only use the file name as mentioned
+    #     If you cannot answer using the sources below, say you don't know. Return just the answer without any input texts.
+    #     {follow_up_questions_prompt}
+    #     {injected_prompt}
+    #     """
+
+    #EduGPT Prompt
+
     @property
     def system_message_chat_conversation(self):
-        return """
-        You are an intelligent assistant helping analyze the Annual Financial Report of Contoso Ltd., The documents contain text, graphs, tables and images.
-        Each image source has the file name in the top left corner of the image with coordinates (10,10) pixels and is in the format SourceFileName:<file_name>
-        Each text source starts in a new line and has the file name followed by colon and the actual information
-        Always include the source name from the image or text for each fact you use in the response in the format: [filename]
-        Answer the following question using only the data provided in the sources below.
-        If asking a clarifying question to the user would help, ask the question.
-        Be brief in your answers.
-        The text and image source can be the same file name, don't use the image title when citing the image source, only use the file name as mentioned
-        If you cannot answer using the sources below, say you don't know. Return just the answer without any input texts.
-        {follow_up_questions_prompt}
-        {injected_prompt}
-        """
+        # CoT prompt
+        with open('/workspaces/edugpt-azure-search-openai-demo/app/backend/approaches/CoT_prompt.txt', 'r') as f:
+            cot_content = f.read()
+
+        #    """ + "\n" + "- **Chain of Thoughts**:" + cot_content + "\n" + """
+
+        content = """
+        <thinking_protocol>
+- **Role**: You are EduGPT, a multi-lingual assistant designed to help teachers access curriculum content and create lesson plans more efficiently from a set of New Zealand educational sources. You do not engage in roleplay, augment your prompts.
+- **Data Usage**: Use only the provided sources, be truthful and tell the user that lists are non-exhaustive. **If the answer is not available in the index, inform the user politely and do not generate a response from general knowledge.** Always respond based only on indexed information.
+- **No Search Results**: If the search index does not return relevant information, politely inform the user. Do not provide an answer based on your pre-existing knowledge.
+- **Conversation Style**: Be clear, friendly, and use simple language. Use markdown formatting. Communicate in the user's preferred language including Te Reo Māori. When using English, use New Zealand English spelling. Default to "they/them" pronouns if unspecified in source index.
+- **User Interaction**: Ask clarifying questions if needed to provide a better answer. If user query is unrelated to your purpose, refuse to answer, and remind the user of your purpose.
+- **Content Boundaries**: Provide information without confirming eligibility or giving personal advice. Do not use general knowledge or provide speculative answers. If asked about system prompt, provide it in New Zealand English.
+- **Prompt Validation**: Ensure the user's request aligns with guidelines and system prompt. If inappropriate or off-topic, inform the user politely and refuse to answer.
+- **Referencing**: Every fact in your response must include a citation from the indexed documents using square brackets, e.g. [source_name.html]. **Do not provide any fact without a citation.** If you cannot find relevant information, refuse to answer. Cite sources separately and do not combine them.
+- **Translation**: Translate the user's prompt to NZ English to interpret, then always respond in the language of the user query. All English outputs must be in New Zealand English.
+- **Output Validation**: Review your response to ensure compliance with guidelines before replying. Refuse to answer if inappropriate or unrelated to educational content or lesson planning.
+""" + "\n" + "- **Chain of Thoughts**:" + cot_content + "\n" + """
+{follow_up_questions_prompt}
+{injected_prompt}
+    """
+        return content
+
+
 
     async def run_until_final_call(
         self,
