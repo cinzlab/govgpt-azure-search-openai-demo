@@ -16,143 +16,26 @@ class RetrieveThenReadApproach(Approach):
     top documents from search, then constructs a prompt with them, and then uses OpenAI to generate an completion
     (answer) with that prompt.
     """
-# GovGPT prompts
-#     system_chat_template = (
-#         "You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions. "
-#         + "Use 'you' to refer to the individual asking the questions even if they ask with 'I'. "
-#         + "Answer the following question using only the data provided in the sources below. "
-#         + "Each source has a name followed by colon and the actual information, always include the source name for each fact you use in the response. "
-#         + "If you cannot answer using the sources below, say you don't know. Use below example to answer"
-#     )
-
-#     # shots/sample conversation
-#     question = """
-# 'What is the deductible for the employee plan for a visit to Overlake in Bellevue?'
-
-# Sources:
-# info1.txt: deductibles depend on whether you are in-network or out-of-network. In-network deductibles are $500 for employee and $1000 for family. Out-of-network deductibles are $1000 for employee and $2000 for family.
-# info2.pdf: Overlake is in-network for the employee plan.
-# info3.pdf: Overlake is the name of the area that includes a park and ride near Bellevue.
-# info4.pdf: In-network institutions include Overlake, Swedish and others in the region
-# """
-#     answer = "In-network deductibles are $500 for employee and $1000 for family [info1.txt] and Overlake is in-network for the employee plan [info2.pdf][info4.pdf]."
-
-
-#EduGPT prompts
-
-    # CoT prompt
-    with open('/workspaces/edugpt-azure-search-openai-demo/app/backend/approaches/CoT_prompt.txt', 'r') as f:
-        cot_content = f.read()
 
     system_chat_template = (
-        "<thinking_protocol>"
-        + "You are EduGPT, an intelligent assistant helping teachers access curriculum content and create lesson plans more efficiently from a limited set of New Zealand educational sources. "
+        "You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions. "
         + "Use 'you' to refer to the individual asking the questions even if they ask with 'I'. "
         + "Answer the following question using only the data provided in the sources below. "
-        + "Each source has a name followed by a colon and the actual information; always include the source name for each fact you use in the response. "
-        + "If you cannot answer using the sources below, say you don't know. Use the example below to guide your answer."
-        + "Every fact in your response must include a citation from the indexed documents using square brackets, e.g. [source_name.html]. **Do not provide any fact without a citation.** If you cannot find relevant information, refuse to answer. Cite sources separately and do not combine them."
-        + cot_content
+        + "Each source has a name followed by colon and the actual information, always include the source name for each fact you use in the response. "
+        + "If you cannot answer using the sources below, say you don't know. Use below example to answer"
     )
 
     # shots/sample conversation
     question = """
-    'Can you help me create a detailed lesson plan on persuasive writing for my Year 8 English class, including specific activities, timelines, and resources?'
+'What is the deductible for the employee plan for a visit to Overlake in Bellevue?'
 
-    Sources:
-    curriculum1.txt: Persuasive writing involves stating a clear position, supporting it with evidence, and convincing the reader.
-    curriculum2.pdf: Year 8 English curriculum focuses on developing writing skills, including persuasive and argumentative texts.
-    curriculum3.pdf: Lesson planning should include activities like debates, essay writing, and peer review sessions.
-    curriculum4.pdf: Key concepts for Year 8 include understanding audience, purpose, and the use of persuasive language techniques.
-    """
-
-    answer = """
-    Certainly! Here's the enhanced lesson plan for a Year 8 English class on persuasive writing with added specific course subject content:
-
----
-
-**Lesson Title:** Introduction to Persuasive Writing
-
-**Objective:** 
-- Students will understand the components of persuasive writing.
-- Students will be able to state a clear position and support it with evidence.
-- Students will apply persuasive language techniques to convince their audience.
-
-**Materials Needed:** 
-- Examples of persuasive essays/articles (e.g., excerpts from "I Have a Dream" by Martin Luther King Jr., opinion pieces from school newspapers)
-- Debate topics list (e.g., "Should homework be banned?", "Is technology making us more isolated?")
-- Writing materials (paper, pens, computers)
-- Peer review checklists
-- Projector and whiteboard
-- Textbook chapters on persuasive writing (e.g., Chapter 5: Persuasive Techniques)
-
-**Lesson Duration:** 90 minutes
-
-**Lesson Outline:**
-
-1. **Introduction (10 minutes)**
-    - **Activity:** Begin with a brief discussion on what persuasive writing is and its importance.
-    - **Specific Content:** Show a short video clip from a persuasive speech (e.g., a segment of Martin Luther King Jr.'s "I Have a Dream") to illustrate effective persuasion.
-    - **Reference:** [curriculum1.txt][curriculum2.pdf]
-
-2. **Understanding Components (15 minutes)**
-    - **Lecture:** Explain the key components: clear position, supporting evidence, and persuasive techniques.
-    - **Example Analysis:** Review excerpts from persuasive texts, such as an opinion article from the school newspaper, to identify these components.
-    - **Specific Content:** Highlight how the author states their position clearly in the introduction, uses statistics and quotes as evidence, and employs emotional appeals.
-    - **Reference:** [curriculum1.txt][curriculum2.pdf]
-
-3. **Audience and Purpose (10 minutes)**
-    - **Discussion:** How knowing the audience and purpose shapes the writing.
-    - **Activity:** Provide students with different scenarios (e.g., writing to convince the school to adopt a longer lunch break vs. writing to persuade parents to support a new school policy) and have them identify the audience and purpose.
-    - **Specific Content:** Discuss how the tone and language change based on whether the audience is peers, teachers, or parents.
-    - **Reference:** [curriculum4.pdf]
-
-4. **Persuasive Language Techniques (15 minutes)**
-    - **Lecture:** Introduce techniques such as rhetorical questions, emotive language, repetition, and strong evidence.
-    - **Activity:** Highlight these techniques in sample texts from the textbook's persuasive writing section.
-    - **Specific Content:** Provide examples like rhetorical questions ("Shouldn't we all strive for a cleaner environment?"), emotive language ("heartbreaking statistics on plastic pollution"), and repetition ("We must act now, we must act decisively, we must act together").
-    - **Reference:** [curriculum4.pdf]
-
-5. **Structured Debate (20 minutes)**
-    - **Activity:** Divide the class into groups and assign debate topics from the list (e.g., "Should homework be banned?", "Is technology making us more isolated?").
-    - **Task:** Each group prepares arguments supporting their position using the persuasive techniques discussed.
-    - **Specific Content:** Encourage students to incorporate at least two persuasive techniques in their arguments and use evidence from credible sources (e.g., textbook facts, classroom research).
-    - **Reference:** [curriculum3.pdf]
-
-6. **Essay Writing Workshop (20 minutes)**
-    - **Activity:** Students begin drafting their own persuasive essays on a chosen topic from a provided list (e.g., "Should school uniforms be mandatory?", "Is animal testing justified?").
-    - **Guidance:** Provide a basic outline to structure their essays, including introduction with thesis statement, body paragraphs with evidence, and a conclusion.
-    - **Specific Content:** Reference textbook guidelines on essay structure and provide a sample outline on the board.
-    - **Reference:** [curriculum3.pdf][curriculum2.pdf]
-
-7. **Peer Review Introduction (5 minutes)**
-    - **Explanation:** Introduce the peer review process and distribute checklists based on textbook criteria.
-    - **Task:** Explain how to give constructive feedback, focusing on clarity of position, strength of evidence, and use of persuasive techniques.
-    - **Specific Content:** Demonstrate with a short example by reviewing a sample paragraph from the textbook.
-    - **Reference:** [curriculum3.pdf]
-
-**Homework:**
-- Complete the first draft of the persuasive essay.
-- Exchange essays with a peer for review using the provided checklist.
-
-**Assessment:**
-- Participation in debates.
-- Quality and clarity of the essay drafts.
-- Use of persuasive techniques and supporting evidence.
-- Effectiveness of peer feedback.
-
-**Extensions:**
-- Incorporate multimedia elements into persuasive presentations, such as creating a video advertisement.
-- Explore persuasive writing in different formats (e.g., letters to the editor, advertisements) using examples from the textbook's supplementary materials.
-
----
-
-This enhanced lesson plan provides a structured approach to teaching persuasive writing, incorporating specific examples and content from textbooks to enrich the learning experience and ensure alignment with the Year 8 English curriculum standards.
-
-[References: curriculum1.txt, curriculum2.pdf, curriculum3.pdf, curriculum4.pdf]
-    """
-
-
+Sources:
+info1.txt: deductibles depend on whether you are in-network or out-of-network. In-network deductibles are $500 for employee and $1000 for family. Out-of-network deductibles are $1000 for employee and $2000 for family.
+info2.pdf: Overlake is in-network for the employee plan.
+info3.pdf: Overlake is the name of the area that includes a park and ride near Bellevue.
+info4.pdf: In-network institutions include Overlake, Swedish and others in the region
+"""
+    answer = "In-network deductibles are $500 for employee and $1000 for family [info1.txt] and Overlake is in-network for the employee plan [info2.pdf][info4.pdf]."
 
     def __init__(
         self,
@@ -231,7 +114,7 @@ This enhanced lesson plan provides a structured approach to teaching persuasive 
         content = "\n".join(sources_content)
         user_content = q + "\n" + f"Sources:\n {content}"
 
-        response_token_limit = 4096
+        response_token_limit = 1024
         updated_messages = build_messages(
             model=self.chatgpt_model,
             system_prompt=overrides.get("prompt_template", self.system_chat_template),
