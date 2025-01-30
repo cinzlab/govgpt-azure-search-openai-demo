@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "npm": "^10.9.0",
+    "npm": "^11.1.0",
     "react-google-recaptcha": "^3.1.0"
   },
   "devDependencies": {
