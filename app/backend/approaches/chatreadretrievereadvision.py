@@ -16,6 +16,8 @@ from approaches.approach import ThoughtStep
 from approaches.chatapproach import ChatApproach
 from core.authentication import AuthenticationHelper
 from core.imageshelper import fetch_image
+from guardrails import GuardrailsOrchestrator
+from guardrails.datamodels import GuardrailOnErrorAction
 
 
 class ChatReadRetrieveReadVisionApproach(ChatApproach):
@@ -44,7 +46,9 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         query_language: str,
         query_speller: str,
         vision_endpoint: str,
-        vision_token_provider: Callable[[], Awaitable[str]]
+        vision_token_provider: Callable[[], Awaitable[str]],
+        input_guardrails: Optional[GuardrailsOrchestrator],
+        output_guardrails: Optional[GuardrailsOrchestrator],
     ):
         self.search_client = search_client
         self.blob_container_client = blob_container_client
@@ -64,6 +68,8 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         self.vision_endpoint = vision_endpoint
         self.vision_token_provider = vision_token_provider
         self.chatgpt_token_limit = get_token_limit(gpt4v_model)
+        self.input_guardrails = input_guardrails
+        self.output_guardrails = output_guardrails
 
     @property
     def system_message_chat_conversation(self):
@@ -88,6 +94,28 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         auth_claims: dict[str, Any],
         should_stream: bool = False,
     ) -> tuple[dict[str, Any], Coroutine[Any, Any, Union[ChatCompletion, AsyncStream[ChatCompletionChunk]]]]:
+        # Output guardrail check
+        if messages[-1]["role"] == "assistant":
+            if self.output_guardrails:
+                guardrail_results = await self.output_guardrails.process_chat_history(messages)
+                if guardrail_results.immediate_response:
+                    return ({"validation_failed": True,
+                             "action": guardrail_results.action.value},
+                             guardrail_results.messages)
+            return ({"validation_passed": True}, messages[-1:]) 
+
+        # Input guardrail check
+        if self.input_guardrails and messages[-1]["role"] == "user":
+            guardrail_results = await self.input_guardrails.process_chat_history(messages)
+            if guardrail_results.immediate_response:
+                extra_info = {"action": guardrail_results.action.value}
+                if guardrail_results.action.value == GuardrailOnErrorAction.CONTINUE_WITH_MODIFIED_INPUT.value:
+                    for result in guardrail_results.results:
+                        if result.state == "failed" and result.modified_message:
+                            extra_info["modified_message"] = result.modified_message
+                            break
+                return (extra_info, guardrail_results.messages)
+
         seed = overrides.get("seed", None)
         use_text_search = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         use_vector_search = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
@@ -234,6 +262,15 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
                 ),
             ],
         }
+
+        # Output guardrail check
+        if self.output_guardrails:
+            guardrail_results, messages, return_response_immediately = await self.output_guardrails.update_chat_history(
+                messages
+            )
+            if return_response_immediately:
+                # TODO will need to debug
+                return (None, messages)
 
         chat_coroutine = self.openai_client.chat.completions.create(
             model=self.gpt4v_deployment if self.gpt4v_deployment else self.gpt4v_model,

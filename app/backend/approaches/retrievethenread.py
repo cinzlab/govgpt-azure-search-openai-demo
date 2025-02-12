@@ -8,6 +8,7 @@ from openai_messages_token_helper import build_messages, get_token_limit
 
 from approaches.approach import Approach, ThoughtStep
 from core.authentication import AuthenticationHelper
+from guardrails import GuardrailsOrchestrator
 
 
 class RetrieveThenReadApproach(Approach):
@@ -52,6 +53,7 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         content_field: str,
         query_language: str,
         query_speller: str,
+        input_guardrails: Optional[GuardrailsOrchestrator],
     ):
         self.search_client = search_client
         self.chatgpt_deployment = chatgpt_deployment
@@ -67,6 +69,7 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         self.query_language = query_language
         self.query_speller = query_speller
         self.chatgpt_token_limit = get_token_limit(chatgpt_model)
+        self.input_guardrails = input_guardrails
 
     async def run(
         self,
@@ -77,6 +80,15 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         q = messages[-1]["content"]
         if not isinstance(q, str):
             raise ValueError("The most recent message content must be a string.")
+
+        # Input guardrail check
+        if self.input_guardrails:
+            guardrail_results = await self.input_guardrails.process_chat_history(messages)
+            messages = guardrail_results.messages
+            if guardrail_results.immediate_response:
+                extra_info = {}
+                return (extra_info, guardrail_results.messages)
+
         overrides = context.get("overrides", {})
         seed = overrides.get("seed", None)
         auth_claims = context.get("auth_claims", {})
@@ -164,7 +176,6 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
                 ),
             ],
         }
-
         return {
             "message": {
                 "content": chat_completion.choices[0].message.content,

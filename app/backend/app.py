@@ -86,6 +86,13 @@ from prepdocs import (
 from prepdocslib.filestrategy import UploadUserFileStrategy
 from prepdocslib.listfilestrategy import File
 
+from guardrails import GuardrailsOrchestrator
+from guardrails.ban_list import BanListCheck, BANNED_WORDS
+from guardrails.profanity_check import ProvanityCheck
+from guardrails.nsfw_check import NSFWCheck
+from guardrails.pii_check import PIICheck
+from guardrails.output_check import OutputContentCheck
+
 bp = Blueprint("routes", __name__, static_folder="static")
 # Fix Windows registry issue with mimetypes
 mimetypes.add_type("application/javascript", ".js")
@@ -284,6 +291,7 @@ async def chat_stream(auth_claims: Dict[str, Any]):
             session_state=request_json.get("session_state"),
         )
         response = await make_response(format_as_ndjson(result))
+
         response.timeout = None  # type: ignore
         response.mimetype = "application/json-lines"
         return response
@@ -606,6 +614,15 @@ async def setup_clients():
             organization=OPENAI_ORGANIZATION,
         )
 
+    # input guardrails and early refusal handling
+    input_guardrails = GuardrailsOrchestrator(guardrails=[BanListCheck(BANNED_WORDS),
+                                                          ProvanityCheck(),
+                                                          PIICheck(),
+                                                          NSFWCheck()])
+    
+    # Add output content validation
+    output_guardrails = GuardrailsOrchestrator(guardrails=[OutputContentCheck()])
+    # output_guardrails = None
     current_app.config[CONFIG_OPENAI_CLIENT] = openai_client
     current_app.config[CONFIG_SEARCH_CLIENT] = search_client
     current_app.config[CONFIG_BLOB_CONTAINER_CLIENT] = blob_container_client
@@ -634,6 +651,7 @@ async def setup_clients():
         content_field=KB_FIELDS_CONTENT,
         query_language=AZURE_SEARCH_QUERY_LANGUAGE,
         query_speller=AZURE_SEARCH_QUERY_SPELLER,
+        input_guardrails=input_guardrails,
     )
 
     current_app.config[CONFIG_CHAT_APPROACH] = ChatReadRetrieveReadApproach(
@@ -649,6 +667,8 @@ async def setup_clients():
         content_field=KB_FIELDS_CONTENT,
         query_language=AZURE_SEARCH_QUERY_LANGUAGE,
         query_speller=AZURE_SEARCH_QUERY_SPELLER,
+        input_guardrails=input_guardrails,
+        output_guardrails=output_guardrails,
     )
 
     if USE_GPT4V:
@@ -673,6 +693,7 @@ async def setup_clients():
             content_field=KB_FIELDS_CONTENT,
             query_language=AZURE_SEARCH_QUERY_LANGUAGE,
             query_speller=AZURE_SEARCH_QUERY_SPELLER,
+            input_guardrails=input_guardrails,
         )
 
         current_app.config[CONFIG_CHAT_VISION_APPROACH] = ChatReadRetrieveReadVisionApproach(
@@ -693,6 +714,8 @@ async def setup_clients():
             content_field=KB_FIELDS_CONTENT,
             query_language=AZURE_SEARCH_QUERY_LANGUAGE,
             query_speller=AZURE_SEARCH_QUERY_SPELLER,
+            input_guardrails=input_guardrails,
+            output_guardrails=output_guardrails,
         )
 
 

@@ -13,6 +13,7 @@ from openai_messages_token_helper import build_messages, get_token_limit
 from approaches.approach import Approach, ThoughtStep
 from core.authentication import AuthenticationHelper
 from core.imageshelper import fetch_image
+from guardrails import GuardrailsOrchestrator
 
 
 class RetrieveThenReadVisionApproach(Approach):
@@ -49,7 +50,8 @@ class RetrieveThenReadVisionApproach(Approach):
         query_language: str,
         query_speller: str,
         vision_endpoint: str,
-        vision_token_provider: Callable[[], Awaitable[str]]
+        vision_token_provider: Callable[[], Awaitable[str]],
+        input_guardrails: Optional[GuardrailsOrchestrator],
     ):
         self.search_client = search_client
         self.blob_container_client = blob_container_client
@@ -67,6 +69,7 @@ class RetrieveThenReadVisionApproach(Approach):
         self.vision_endpoint = vision_endpoint
         self.vision_token_provider = vision_token_provider
         self.gpt4v_token_limit = get_token_limit(gpt4v_model)
+        self.input_guardrails = input_guardrails
 
     async def run(
         self,
@@ -77,6 +80,13 @@ class RetrieveThenReadVisionApproach(Approach):
         q = messages[-1]["content"]
         if not isinstance(q, str):
             raise ValueError("The most recent message content must be a string.")
+        # Input guardrail check
+        if self.input_guardrails:
+            guardrail_results = await self.input_guardrails.process_chat_history(messages)
+            messages = guardrail_results.messages
+            if guardrail_results.immediate_response:
+                extra_info = {}
+                return (extra_info, guardrail_results.messages)
 
         overrides = context.get("overrides", {})
         seed = overrides.get("seed", None)
@@ -186,7 +196,6 @@ class RetrieveThenReadVisionApproach(Approach):
                 ),
             ],
         }
-
         return {
             "message": {
                 "content": chat_completion.choices[0].message.content,

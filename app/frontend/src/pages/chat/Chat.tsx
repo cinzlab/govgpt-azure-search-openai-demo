@@ -83,6 +83,8 @@ const Chat = () => {
     const audio = useRef(new Audio()).current;
     const [isPlaying, setIsPlaying] = useState(false);
 
+    const [originalUserMessages, setOriginalUserMessages] = useState<string[]>([]);
+
     const speechConfig: SpeechConfig = {
         speechUrls,
         setSpeechUrls,
@@ -110,44 +112,161 @@ const Chat = () => {
     const handleAsyncRequest = async (question: string, answers: [string, ChatAppResponse][], responseBody: ReadableStream<any>) => {
         let answer: string = "";
         let askResponse: ChatAppResponse = {} as ChatAppResponse;
+        let isBlocked = false;
+        let isModified = false;
+        let truncateHistory = false;
+        let modifiedMessage = "";
 
-        const updateState = (newContent: string) => {
+        const updateState = (newContent: string, role: string | undefined) => {
             return new Promise(resolve => {
                 setTimeout(() => {
                     answer += newContent;
                     const latestResponse: ChatAppResponse = {
                         ...askResponse,
-                        message: { content: answer, role: askResponse.message.role }
+                        message: { content: answer, role: role ?? askResponse.message?.role }
                     };
-                    setStreamedAnswers([...answers, [question, latestResponse]]);
+                    if (isBlocked) {
+                        setStreamedAnswers([...answers, ["message blocked", latestResponse]]);
+                    } else if (isModified) {
+                        setStreamedAnswers([...answers, [modifiedMessage || question, latestResponse]]);
+                    } else if (truncateHistory) {
+                        setStreamedAnswers([[question, latestResponse]]);
+                    } else {
+                        setStreamedAnswers([...answers, [question, latestResponse]]);
+                    }
                     resolve(null);
                 }, 33);
             });
         };
+
         try {
             setIsStreaming(true);
             for await (const event of readNDJSONStream(responseBody)) {
+                if (event["action"] === "block") {
+                    isBlocked = true;
+                    continue;
+                } else if (event["action"] === "truncate_history") {
+                    truncateHistory = true;
+                    continue;
+                } else if (event["action"] === "continue_with_modified_input") {
+                    isModified = true;
+                    continue;
+                } else if (event.context?.action === "continue_with_modified_input" && event.context?.modified_message) {
+                    modifiedMessage = event.context.modified_message;
+                }
+                
                 if (event["context"] && event["context"]["data_points"]) {
                     event["message"] = event["delta"];
                     askResponse = event as ChatAppResponse;
                 } else if (event["delta"] && event["delta"]["content"]) {
                     setIsLoading(false);
-                    await updateState(event["delta"]["content"]);
+                    if (!askResponse.message) {
+                        event["message"] = event["delta"];
+                        askResponse = event as ChatAppResponse;
+                    }
+                    await updateState(event["delta"]["content"], event["delta"]["role"]);
                 } else if (event["context"]) {
-                    // Update context with new keys from latest event
                     askResponse.context = { ...askResponse.context, ...event["context"] };
                 } else if (event["error"]) {
                     throw Error(event["error"]);
                 }
             }
         } finally {
+            const currentStreamedResponse: ChatAppResponse = {
+                ...askResponse,
+                message: { 
+                    content: answer,
+                    role: askResponse.message?.role 
+                }
+            };
+
+            if (!isBlocked && !isModified) {
+                if (truncateHistory) {
+                    setOriginalUserMessages([originalUserMessages[originalUserMessages.length - 1]]);
+                    setStreamedAnswers([[question, currentStreamedResponse]]);
+                } else {
+                    setStreamedAnswers([...answers, [question, currentStreamedResponse]]);
+                }
+            }
+
+            if (answer && !isBlocked && !isModified && !truncateHistory) {
+                try {
+                    const token = client ? await getToken(client) : undefined;
+                    const validationResponse = await chatApi(
+                        {
+                            messages: [
+                                ...answers.flatMap(a => [
+                                    { content: a[0], role: "user" },
+                                    { content: a[1].message.content, role: "assistant" }
+                                ]),
+                                { content: question, role: "user" },
+                                { content: answer, role: "assistant" }
+                            ],
+                            context: {
+                                validate_only: true,
+                                overrides: {
+                                    vector_fields: vectorFieldList
+                                }
+                            },
+                            session_state: null
+                        },
+                        false,
+                        token
+                    );
+
+                    if (validationResponse.ok) {
+                        const validationData = await validationResponse.json();
+                        if (validationData.context?.validation_failed) {
+                            if (validationData.context.action === "truncate_history") {
+                                truncateHistory = true;
+                                answer = validationData.message.content || "Chat history has been cleared due to content validation";
+                                const validationResponse: ChatAppResponse = {
+                                    ...askResponse,
+                                    message: { content: answer, role: "assistant" }
+                                };
+                                setOriginalUserMessages([originalUserMessages[originalUserMessages.length - 1]]);
+                                setStreamedAnswers([[question, validationResponse]]);
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.error("Validation request failed:", error);
+                }
+            }
+
+            const fullResponse: ChatAppResponse = {
+                ...askResponse,
+                message: { 
+                    content: answer,
+                    role: askResponse.message?.role 
+                }
+            };
+
+            if (truncateHistory) {
+                setOriginalUserMessages([originalUserMessages[originalUserMessages.length - 1]]);
+                setAnswers([[question, fullResponse]]);
+                setStreamedAnswers([[question, fullResponse]]);
+            } else {
+                if (isBlocked) {
+                    setAnswers([...answers, ["message blocked", fullResponse]]);
+                } else if (isModified) {
+                    setAnswers([...answers, [modifiedMessage || question, fullResponse]]);
+                } else {
+                    setAnswers([...answers, [question, fullResponse]]);
+                }
+            }
+
             setIsStreaming(false);
+            setIsLoading(false);
+
+            return { 
+                response: fullResponse, 
+                blocked: isBlocked, 
+                modified: isModified, 
+                truncated: truncateHistory,
+                modifiedMessage 
+            };
         }
-        const fullResponse: ChatAppResponse = {
-            ...askResponse,
-            message: { content: answer, role: askResponse.message.role }
-        };
-        return fullResponse;
     };
 
     const client = useLogin ? useMsal().instance : undefined;
@@ -155,6 +274,7 @@ const Chat = () => {
 
     const makeApiRequest = async (question: string, recaptchaToken: string) => {
         lastQuestionRef.current = question;
+        setOriginalUserMessages(prev => [...prev, question]);
 
         error && setError(undefined);
         setIsLoading(true);
@@ -192,7 +312,6 @@ const Chat = () => {
                         ...(seed !== null ? { seed: seed } : {})
                     }
                 },
-                // AI Chat Protocol: Client must pass on any session state received from the server
                 session_state: answers.length ? answers[answers.length - 1][1].session_state : null,
                 recaptcha_token: recaptchaToken
             };
@@ -204,15 +323,23 @@ const Chat = () => {
             if (response.status > 299 || !response.ok) {
                 throw Error(`Request failed with status ${response.status}`);
             }
+
             if (shouldStream) {
-                const parsedResponse: ChatAppResponse = await handleAsyncRequest(question, answers, response.body);
-                setAnswers([...answers, [question, parsedResponse]]);
+                const { response: parsedResponse, blocked, modified, truncated, modifiedMessage } = await handleAsyncRequest(question, answers, response.body);
+                if (truncated) {
+                    setAnswers([[question, parsedResponse]]);
+                } else if (!blocked && !modified) {
+                    setAnswers([...answers, [question, parsedResponse]]);
+                } else if (modified) {
+                    setAnswers([...answers, [modifiedMessage || question, parsedResponse]]);
+                }
             } else {
                 const parsedResponse: ChatAppResponseOrError = await response.json();
                 if (parsedResponse.error) {
                     throw Error(parsedResponse.error);
+                } else {
+                    setAnswers([...answers, [question, parsedResponse as ChatAppResponse]]);
                 }
-                setAnswers([...answers, [question, parsedResponse as ChatAppResponse]]);
             }
             setSpeechUrls([...speechUrls, null]);
         } catch (e) {
@@ -228,6 +355,7 @@ const Chat = () => {
         setActiveCitation(undefined);
         setActiveAnalysisPanelTab(undefined);
         setAnswers([]);
+        setOriginalUserMessages([]);
         setSpeechUrls([]);
         setStreamedAnswers([]);
         setIsLoading(false);
@@ -315,6 +443,7 @@ const Chat = () => {
 
     const recaptchaRef = useRef<ReCAPTCHA>(null);
 
+    // just keep the same naming as prod version but don't need recaptcha
     const handleCaptchaOnClick = async (value: string) => {
         if (recaptchaRef.current) {
             try {
@@ -330,7 +459,6 @@ const Chat = () => {
                 console.error("reCAPTCHA execution error:", error);
                 alert("reCAPTCHA timed out. Please try again.");
             }
-        }
     };
 
     // IDs for form labels and their associated callouts
@@ -386,7 +514,7 @@ const Chat = () => {
                             {isStreaming &&
                                 streamedAnswers.map((streamedAnswer, index) => (
                                     <div key={index}>
-                                        <UserChatMessage message={streamedAnswer[0]} />
+                                        <UserChatMessage message={originalUserMessages[index]} />
                                         <div className={styles.chatMessageGpt}>
                                             <Answer
                                                 isStreaming={true}
@@ -409,7 +537,7 @@ const Chat = () => {
                             {!isStreaming &&
                                 answers.map((answer, index) => (
                                     <div key={index}>
-                                        <UserChatMessage message={answer[0]} />
+                                        <UserChatMessage message={originalUserMessages[index]} />
                                         <div className={styles.chatMessageGpt}>
                                             <Answer
                                                 isStreaming={false}

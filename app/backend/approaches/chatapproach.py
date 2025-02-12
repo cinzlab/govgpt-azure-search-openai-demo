@@ -39,8 +39,16 @@ class ChatApproach(Approach, ABC):
 
     query_prompt_template = """Use the conversation and the new user question to generate a search query for the Azure AI Search index containing thousands of documents.
 Guidelines:
-- **Exclusions**: Do not include filenames, document names, or text within "[ ]" or "<< >>" in the search terms.
-- **Formatting**: Exclude special characters like "+".
+- **Query Focus**: 
+  - Extract key concepts and terms directly from the user's question
+  - Include synonyms and related terms to improve recall
+  - Prioritize specific technical terms and proper nouns
+  - Remove conversational language and filler words
+- **Exclusions**: Do not include filenames, document names, or text within "[ ]" or "<< >>" in the search terms
+- **Formatting**: 
+  - Use simple keyword combinations
+  - Exclude special characters like "+"
+  - Keep queries concise but comprehensive
 - **Unable to Generate**: If you can't generate a query, return "0". If you can't find relevant sources in the index, say "I can't find the information you're looking for."
 - **Role**: You are GovGPT, a multi-lingual assistant for small business services and support from a limited set of New Zealand government sources. You do not engage in roleplay, augment your prompts, or provide creative examples.
 - **Data Usage**: Use only the provided sources, be truthful and tell the user that lists are non-exhaustive. **If the answer is not available in the index, inform the user politely and do not generate a response from general knowledge.** Always respond based only on indexed information.
@@ -108,9 +116,13 @@ Guidelines:
         extra_info, chat_coroutine = await self.run_until_final_call(
             messages, overrides, auth_claims, should_stream=False
         )
-        chat_completion_response: ChatCompletion = await chat_coroutine
-        content = chat_completion_response.choices[0].message.content
-        role = chat_completion_response.choices[0].message.role
+        if isinstance(chat_coroutine, list):
+            content = chat_coroutine[-1]["content"]
+            role = chat_coroutine[-1]["role"]
+        else:
+            chat_completion_response: ChatCompletion = await chat_coroutine
+            content = chat_completion_response.choices[0].message.content
+            role = chat_completion_response.choices[0].message.role
         if overrides.get("suggest_followup_questions"):
             content, followup_questions = self.extract_followup_questions(content)
             extra_info["followup_questions"] = followup_questions
@@ -131,37 +143,50 @@ Guidelines:
         extra_info, chat_coroutine = await self.run_until_final_call(
             messages, overrides, auth_claims, should_stream=True
         )
+        if action := extra_info.get('action'):
+            yield {"action": action}  # Can be either "TRUNCATE_HISTORY" or "BLOCK"
+        
         yield {"delta": {"role": "assistant"}, "context": extra_info, "session_state": session_state}
+        
+        if isinstance(chat_coroutine, list):
+            message = chat_coroutine[-1]
+            completion = {
+                "delta": {"role": message["role"], "content": message["content"]},
+                "context": extra_info,
+                "session_state": None,
+            }
+            yield completion
+        else:
+            followup_questions_started = False
+            followup_content = ""
+            async for event_chunk in await chat_coroutine:
+                # "2023-07-01-preview" API version has a bug where first response has empty choices
+                event = event_chunk.model_dump()  # Convert pydantic model to dict
+                if event["choices"]:
 
-        followup_questions_started = False
-        followup_content = ""
-        async for event_chunk in await chat_coroutine:
-            # "2023-07-01-preview" API version has a bug where first response has empty choices
-            event = event_chunk.model_dump()  # Convert pydantic model to dict
-            if event["choices"]:
-                completion = {
-                    "delta": {
-                        "content": event["choices"][0]["delta"].get("content"),
-                        "role": event["choices"][0]["delta"]["role"],
+                    completion = {
+                        "delta": {
+                            "content": event["choices"][0]["delta"].get("content"),
+                            "role": event["choices"][0]["delta"]["role"],
+                        }
                     }
-                }
-                # if event contains << and not >>, it is start of follow-up question, truncate
-                content = completion["delta"].get("content")
-                content = content or ""  # content may either not exist in delta, or explicitly be None
-                if overrides.get("suggest_followup_questions") and "<<" in content:
-                    followup_questions_started = True
-                    earlier_content = content[: content.index("<<")]
-                    if earlier_content:
-                        completion["delta"]["content"] = earlier_content
+                    # if event contains << and not >>, it is start of follow-up question, truncate
+                    content = completion["delta"].get("content")
+                    content = content or ""  # content may either not exist in delta, or explicitly be None
+                    if overrides.get("suggest_followup_questions") and "<<" in content:
+                        followup_questions_started = True
+                        earlier_content = content[: content.index("<<")]
+                        if earlier_content:
+                            completion["delta"]["content"] = earlier_content
+                            yield completion
+                        followup_content += content[content.index("<<") :]
+                    elif followup_questions_started:
+                        followup_content += content
+                    else:
                         yield completion
-                    followup_content += content[content.index("<<") :]
-                elif followup_questions_started:
-                    followup_content += content
-                else:
-                    yield completion
-        if followup_content:
-            _, followup_questions = self.extract_followup_questions(followup_content)
-            yield {"delta": {"role": "assistant"}, "context": {"followup_questions": followup_questions}}
+            if followup_content:
+                _, followup_questions = self.extract_followup_questions(followup_content)
+                yield {"delta": {"role": "assistant"}, "context": {"followup_questions": followup_questions}}
 
     async def run(
         self,
