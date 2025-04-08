@@ -1,6 +1,19 @@
 # This is the main branch for GovGPT, powered by Callaghan Innovation
 ## This code is based on Microsoft's azure-search-openai-demo code, with significant modification.
-### Some tweaks may be pushed back to the main repo as PRs. You can find previous versions in the other branches, as well as iterative tweaks we've made to front-end design. MINOR versioning (x.N.x) represents significant changes from the previous version. PATCH versioning (x.x.N) represents UI updates. MAJOR versioning (N.x.x) will be used if this product reaches a production-level deployment.
+
+### Code in this repository is free for use by anyone, anywhere but is still subject to the original license under which Microsoft supplied the original repo. Anyone is welcome to propose code changes herein to the upstream (Microsoft repo) as PRs - however note that the code has diverged significantly from the original codebase.
+
+### Changes vs. Upstream (at time of fork) are as follows:
+- An evaluation framework has been developed
+- A multi-LLM "sandwiching" process has been implemented
+  - This process uses multiple LLMs to validate both the query and response against the system prompt
+  - This ensures a more accurate and safer response
+  - It also ensures adherance to rules around undesirable responses
+ - A "theming" workflow has been created (please refer to the [customise_frontend.md](https://github.com/cinzlab/govgpt-azure-search-openai-demo/blob/main-0.6.3-dev/docs/customise_frontend.md) doc)
+ - Hidden Google ReCAPTCHA has been added - please ensure you create/add the env variable to your Azure App Service: GOOGLE_RECAPTCHA_KEY <recaptcha key>
+ - Process changes (which you are welcome to use and adapt as ytou need):
+   - Significant changes to the original system prompt have been implemented
+   - A legally robust disclaimer has been added
 
 **Microsoft documentation continues below**
 
