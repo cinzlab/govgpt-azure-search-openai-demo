@@ -4,16 +4,17 @@
 ### Code in this repository is free for use by anyone, anywhere but is still subject to the original license under which Microsoft supplied the original repo. Anyone is welcome to propose code changes herein to the upstream (Microsoft repo) as PRs - however note that the code has diverged significantly from the original codebase.
 
 ### Changes vs. Upstream (at time of fork) are as follows:
-- An evaluation framework has been developed
+- An evaluation framework has been developed - refer to the "evaluation_framework" folder in this repo
 - A multi-LLM "sandwiching" process has been implemented
   - This process uses multiple LLMs to validate both the query and response against the system prompt
   - This ensures a more accurate and safer response
   - It also ensures adherance to rules around undesirable responses
- - A "theming" workflow has been created (please refer to the [customise_frontend.md](https://github.com/cinzlab/govgpt-azure-search-openai-demo/blob/main-0.6.3-dev/docs/customise_frontend.md) doc)
- - Hidden Google reCAPTCHA has been added - please ensure you create/add the env variable to your Azure App Service: GOOGLE_RECAPTCHA_KEY <recaptcha key> - reCAPTCHA is freely availabe from Google - you will need to use the "hidden v2" version
- - Process changes (which you are welcome to use and adapt as ytou need):
-   - Significant changes to the original system prompt have been implemented
-   - A legally robust disclaimer has been added
+- A "theming" workflow has been created (please refer to the [customise_frontend.md](https://github.com/cinzlab/govgpt-azure-search-openai-demo/blob/main-0.6.3-dev/docs/customise_frontend.md) doc)
+- Hidden Google reCAPTCHA has been added - please ensure you create/add the env variable to your Azure App Service: GOOGLE_RECAPTCHA_KEY <recaptcha key> - reCAPTCHA is freely availabe from Google - you will need to use the "hidden v2" version
+- Process changes (which you are welcome to use and adapt as ytou need):
+  - Significant changes to the original system prompt have been implemented
+  - A legally robust disclaimer has been added
+- Some basic python code for scraping links (as well as some of the outputs from scraping) has been included in the "ci_linkscraping" folder in this repo
 
 **Microsoft documentation continues below**
 
