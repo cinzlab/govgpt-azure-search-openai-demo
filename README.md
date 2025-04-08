@@ -10,7 +10,7 @@
   - This ensures a more accurate and safer response
   - It also ensures adherance to rules around undesirable responses
  - A "theming" workflow has been created (please refer to the [customise_frontend.md](https://github.com/cinzlab/govgpt-azure-search-openai-demo/blob/main-0.6.3-dev/docs/customise_frontend.md) doc)
- - Hidden Google ReCAPTCHA has been added - please ensure you create/add the env variable to your Azure App Service: GOOGLE_RECAPTCHA_KEY <recaptcha key>
+ - Hidden Google reCAPTCHA has been added - please ensure you create/add the env variable to your Azure App Service: GOOGLE_RECAPTCHA_KEY <recaptcha key> - reCAPTCHA is freely availabe from Google - you will need to use the "hidden v2" version
  - Process changes (which you are welcome to use and adapt as ytou need):
    - Significant changes to the original system prompt have been implemented
    - A legally robust disclaimer has been added
